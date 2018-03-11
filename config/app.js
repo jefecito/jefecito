@@ -11,7 +11,7 @@ module.exports = {
   production:{
     url: 'http://'
   },
-  jwtSecret: "aqoi2uihdkjahsj3ofLfJraqceQuSDmjVdJWyi9jeuyehjnjfdhiJMw",
+  jwtSecret: "",
   getTransporter: () => {
     var t = nodemailer.createTransport({
       host: '',
