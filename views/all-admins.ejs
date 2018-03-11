@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <% include ../views/modules/dashboard/header %>
+<body>
+  <% include ../views/modules/dashboard/navbar %>
+  <% include ../views/modules/dashboard/sidebar %>
+
+  <div class="container-fluid inner-with-navs breadcrumb">
+    <h4 class="main-title">Administradores</h4>
+  </div> <!-- /.container-fluid -->
+
+  <div class="container-fluid light inner-with-navs no-top">
+    <div class="row">
+      <div class="col-sm-12">
+        <button type="button" class="btn btn-primary tabla-button-top btn-sm" onClick="addNewAdmin()">
+          <i class="fa fa-user-plus"></i> Agregar administrador
+        </button> <!-- /.btn -->
+        <button type="button" class="btn btn-info tabla-button-top btn-sm" onClick="renderAdminTable()">
+          <i class="fa fa-refresh"></i> Recargar Tabla
+        </button> <!-- /.btn -->
+        <div class="table-responsive">
+          <table id="adminTable" class="table table-hover anses">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Fecha Registro</th>
+                <th>Registrado Con</th>
+                <th>Acción</th>
+              </tr> <!-- /tr -->
+            </thead> <!-- /thead -->
+          </table> <!-- /.table -->
+        </div> <!-- /.table-responsive -->
+      </div> <!-- /.col-sm-12 -->
+    </div> <!-- /.row -->
+  </div> <!-- /.container-fluid -->
+
+  <!-- ################################################# -->
+  <!--                  MODAL ADMINS                     -->
+  <!-- ################################################# -->
+  <div class="modal fade in" role="dialog" id="addNewAdminModal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Agregar nuevo administrador</h3>
+        </div>
+        <div class="modal-body">
+          <p>Seleccione un usuario:</p>
+          <div class="form-group">
+            <select id="selectUser" class="form-control">
+              <option></option>
+            </select> <!-- /.form-control -->
+          </div> <!-- /form-group -->
+      
+          <div class="card" id="userToAdminInner">
+            <div class="card-content">
+              <img alt="avatar" class="modal-avatar" id="addAdminAvatar">
+              <div class="user-to-delete-data">
+                <p>ID del Usuario<br>
+                <b id="addAdminId"></b></p>
+                <p>Nombre de Usuario<br>
+                <b id="addAdminUsername"></b></p>
+                <div ng-if="userToAdmin.local.creationMethod == 'local'">
+                  <p>Email<br>
+                  <b id="addAdminEmail"></b></p>
+                  <p>Email Confirmado<br>
+                     <b id="addAdminConfirmed"></b>
+                  </p>
+                </div>
+                <p>Fecha de Ingreso<br>
+                <b id="addAdminCreatedAt"></b></p>
+              </div> <!-- /.user-to-delete-data -->
+            </div> <!-- /.card-content -->
+          </div> <!-- /.card -->
+        </div> <!-- /.modal-body -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button id="confirmAddAdminBtn" class="btn btn-primary btn-modal" type="button" disabled>
+            <span>Agregar</span>
+          </button> <!-- /.btn-primary -->
+        </div> <!-- /.modal-footer -->
+      </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+  </div> <!-- /.modal -->
+
+  <div class="modal fade in" role="dialog" id="removeAdminModal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">¿Eliminar como administrador?</h3>
+          <h5 class="modal-title">No eliminará el usuario, solamente revocará sus privilegios como adminstrador.</h5>
+        </div> <!-- /.modal-header -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-content">
+              <img class="modal-avatar" id="deleteAdminAvatar">
+              <div class="user-to-delete-data">
+                <p>ID del Usuario<br>
+                <b id="deleteAdminId"></b></p>
+                <p>Nombre del Usuario<br>
+                <b id="deleteAdminUser"></b></p>
+                <div ng-if="adminToRemove.local.creationMethod == 'local'">
+                  <p>Email<br>
+                  <b id="deleteAdminEmail"></b></p>
+                  <p>Email Confirmado<br>
+                    <b id="deleteAdminConfirmed"></b>
+                  </p>
+                </div>
+                <p>Fecha de Ingreso<br>
+                <b id="deleteAdminCreatedAt"></b></p>
+              </div> <!-- /.user-to-delete-data -->
+            </div> <!-- /.card-content -->
+          </div> <!-- /.card -->
+        </div> <!-- /.modal-body -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button id="deleteAdminBtn" class="btn btn-danger" type="button">
+            <span>Remover</span>
+          </button> <!-- /.btn-danger -->
+        </div> <!-- /.modal-footer -->
+      </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+  </div> <!-- /.modal -->
+
+  <% include ../views/modules/dashboard/scripts %>
+  <script type="text/javascript">var user_id = '<%- user_id %>';</script>
+  <script src="/js/app/all-admins.js"></script>
+</body>
+</html>

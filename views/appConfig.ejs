@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración de la Aplicación</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+  <link rel="stylesheet" href="/css/libs/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/libs/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/libs/animate.css">
+  <link rel="stylesheet" href="/css/libs/messenger.css">
+  <link rel="stylesheet" href="/css/libs/messenger-theme-flat.css">
+  <link rel="stylesheet" href="/css/app/sign.css">
+</head>
+<body>
+  <div class="content-wrapper">
+    <div class="content-caption">
+      <div class="container">
+        <div class="well animated fadeInUp">
+          <h5 class="back-to-index">
+            <img src="/img/logo.jpg">
+          </h5> <!-- /.back-to-index -->
+          <label>Nombre de la Aplicación</label>
+          <div class="form-group input-group">
+            <span class="input-group-addon">
+              <i class="fa fa-university"></i>
+            </span> <!-- /.input-group-addon -->
+            <input type="text" class="form-control" id="appName" placeholder="Nombre">
+          </div> <!-- /.form-group -->
+          <label>URL</label>
+          <div class="form-group input-group">
+            <span class="input-group-addon">
+              <i class="fa fa-globe"></i>
+            </span> <!-- /.input-group-addon -->
+            <input type="text" class="form-control" id="appURL" placeholder="URL">
+          </div> <!-- /.form-group -->
+        </div> <!-- /.well -->
+        <div class="well dark animated fadeInUp">
+          <button id="createAppConfigBtn" type="button" class="btn btn-primary btn-submit" disabled>
+            <span>Inicializar Aplicación</span>
+          </button> <!-- /.btn-primary -->
+        </div> <!-- /.well -->
+      </div> <!-- /.container -->
+    </div> <!-- /.content-caption -->
+  </div> <!-- /.content-wrapper -->
+
+  <script src="/js/libs/jquery.min.js"></script>
+  <script src="/js/libs/bootstrap.min.js"></script>
+  <script src="/js/libs/messenger.min.js"></script>
+  <script src="/js/app/app-config.js"></script>
+</body>
+</html>

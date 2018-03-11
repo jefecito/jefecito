@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= app.appName %> | Register</title>
+  <link rel="stylesheet" href="/css/app/fonts.css">
+  <link rel="stylesheet" href="/css/libs/pace.css">
+  <link rel="stylesheet" href="/css/libs/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/libs/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/libs/animate.css">
+  <link rel="stylesheet" href="/css/libs/messenger.css">
+  <link rel="stylesheet" href="/css/libs/messenger-theme-flat.css">
+  <link rel="stylesheet" href="/css/app/sign.css">
+</head>
+<body>
+  <div class="content-wrapper">
+    <div class="content-background"></div>
+    <div class="content-caption">
+      <div class="container">
+        <div class="alert alert-success" id="checkEmailAlert" style="display: none;"></div>
+        <form id="registerForm">
+          <div class="well animated fadeInUp">
+            <a href="/"><h5 class="back-to-index"><img src="/img/logo.jpg"></h5></a>
+            <div class="social-btns">
+              <a href="/auth/facebook" class="btn btn-primary btn-submit btn-fb">
+                <i class="fa fa-facebook"></i> Facebook
+              </a> <!-- /.btn -->
+              <a href="/auth/twitter" class="btn btn-primary btn-submit btn-tw">
+                <i class="fa fa-twitter"></i> Twitter
+              </a> <!-- /.btn -->
+            </div> <!-- /.social-btns -->
+
+            <hr class="sign-hr">
+
+            <label>Usuario</label>
+            <div class="form-group input-group">
+              <span class="input-group-addon"><i class="fa fa-user"></i></span>
+              <input type="text" class="form-control" id="registerUser" placeholder="Usuario">
+            </div> <!-- /.form-group -->
+
+            <label>Email</label>
+            <div class="form-group input-group">
+              <span class="input-group-addon"><i class="fa fa-at"></i></span>
+              <input type="email" class="form-control" id="registerEmail" placeholder="Email">
+            </div> <!-- /.form-group -->
+
+            <div id="passwordInner">
+              <label>Contraseña</label>
+              <div class="form-group input-group">
+                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                <input type="password" class="form-control" id="registerPassword" placeholder="Contraseña">
+              </div> <!-- /.form-group -->
+              <label class="label_pwstrength">Fortaleza de la contraseña:</label>
+              <div class="pwstrength_viewport_progress"></div> <!-- /.pwstrength_viewport_progress-->
+            </div> <!-- /#passwordInner -->
+          </div> <!-- /.well -->
+          <div class="well dark animated fadeInUp">
+            <button id="registerBtn" type="submit" class="btn btn-primary btn-submit">
+              <span>Crear Cuenta</span>
+            </button> <!-- /.btn-primary -->
+            <a class="create-account first" href="/login">Ingresar con tu cuenta</a>
+          </div> <!-- /.well -->
+        </form> <!-- /form -->
+      </div> <!-- /.container -->
+    </div> <!-- /.content-caption -->
+  </div> <!-- /.content-wrapper -->
+  <script src="/js/libs/jquery.min.js"></script>
+  <script src="/js/libs/pace.min.js"></script>
+  <script src="/js/libs/bootstrap.min.js"></script>
+  <script src="/js/libs/messenger.min.js"></script>
+  <script src="/js/libs/pwstrength-bootstrap.min.js"></script>
+  <script src="/js/sign/sign.js"></script>
+  <script src="/js/sign/register.js"></script>
+</body>
+</html>

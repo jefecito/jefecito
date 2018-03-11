@@ -1,0 +1,130 @@
+<section class="section section-light" id="contact">
+   <div class="container">
+      <div class="inner-title">
+         <h2 class="main-title">Contacto</h2>
+         <h4 class="main-subtitle">Drop us a line</h4>
+         <hr class="hr-title">
+      </div>
+
+      <div class="row">
+         <div class="col-sm-7"
+              ng-controller="contactCtrl">
+            <!-- alert success -->
+            <div class="alert alert-success"
+                 id="alerta_ok"
+                 ng-hide="alertSuccess">
+               <p id="msg_ok"
+                  ng-bind-html="msg_ok | to_trusted">
+               </p>
+            </div>
+
+            <!-- alert de error -->
+            <div class="alert alert-danger"
+                 id="alerta_error"
+                 ng-hide="alertDanger">
+               <a class="close"
+                  ng-click="closeAlert()">
+                  ×
+               </a>
+               <p id="msg_error"
+                  ng-bind-html="msg_error | to_trusted">
+               </p>
+            </div>
+
+            <!-- form begin -->
+            <fieldset ng-disabled="sendingMsg">
+               <form method="POST"
+                     role="form"
+                     ng-submit="submitMsg()"
+                     ng-show="globalFrom">
+                  <!-- name input -->
+                  <div class="form-group">
+                     <input type="text"
+                            class="form-control main-contact-input"
+                            id="name"
+                            placeholder="Nombre"
+                            ng-model="name"
+                            ng-model-options="{ updateOn: 'blur' }"
+                            ng-change="toValidate(name, '#name')">
+                  </div>
+                  
+                  <!-- email input -->
+                  <div class="form-group">
+                     <input type="text"
+                            class="form-control main-contact-input"
+                            id="email"
+                            placeholder="Email"
+                            ng-model="email"
+                            ng-model-options="{ updateOn: 'blur' }"
+                            ng-change="toValidate(email, '#email')">
+                  </div>
+                  
+                  <!-- url input -->
+                  <div class="form-group">
+                     <input type="text"
+                            class="form-control main-contact-input"
+                            id="url"
+                            placeholder="Sitio Web"
+                            ng-model="url"
+                            ng-model-options="{ updateOn: 'blur' }"
+                            ng-change="toValidate(url, '#url')">
+                  </div>
+
+                  <!-- msg textarea -->
+                  <div class="form-group">
+                     <textarea class="form-control main-contact-input"
+                               id="msg"
+                               placeholder="Mensaje"
+                               rows="6"
+                               ng-model="msg"
+                               ng-model-options="{ updateOn: 'blur' }"
+                               ng-change="toValidate(msg, '#msg')"></textarea>
+                  </div>
+
+                  <!-- submit btn -->
+                  <div class="text-center">
+                     <button type="submit"
+                             id="sendBtn"
+                             class="btn btn-default btn-submit">
+                        Enviar Mensaje
+                     </button>
+                  </div>
+               </form> <!-- form end -->
+            </fieldset> <!-- fieldset end -->
+
+            <div ng-show="cardMsg" class="msg-show">
+               <h5 class="msg-title">Nombre</h5>
+               <p>{{ name }}</p>
+
+               <h5 class="msg-title">Email</h5>
+               <p>{{ email }}</p>
+
+               <h5 ng-show="url" class="msg-title">Sitio Web</h5>
+               <p>{{ url }}</p>
+
+               <h5 class="msg-title">Mensaje</h5>
+               <p>{{ msg }}</p>
+            </div>
+         </div>
+         <div class="col-sm-5">
+            <div class="contact-data">
+               <h4 class="data-title">Ubicación</h4>
+               <h4 class="data-body">Rosario, Argentina</h4>
+            </div>
+            <div class="contact-data">
+               <h4 class="data-title">Email</h4>
+               <h4 class="data-body">
+                  <a href="mailto:someone@example.com?Subject=Consulta%20Web"
+                     target="_top">
+                     contact@web-template.com
+                  </a>
+               </h4>
+            </div>
+            <div class="contact-data">
+               <h4 class="data-title">Teléfono</h4>
+               <h4 class="data-body">+54 341 12345678</h4>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>

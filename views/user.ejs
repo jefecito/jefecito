@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <% include ../views/modules/user-panel/user-header %>
+<body>
+  <% include ../views/modules/user-panel/user-navbar %>
+  <% include ../views/modules/user-panel/user-sidebar %>
+
+  <div class="container-fluid inner-with-navs breadcrumb">
+    <h4 class="main-title">Panel de Usuario</h4>
+  </div> <!-- /.container-fluid -->
+
+  <div class="container-fluid light inner-with-navs no-top">
+    <div id="filesToDownload">
+      <div class="card">
+        <div class="card-content text-center">
+          <strong><i class="fa fa-refresh fa-spin fa-fw"></i> Cargando archivos...</strong>
+        </div> <!-- /.card-content -->
+      </div> <!-- /.card -->
+    </div> <!-- /#filesToDownload -->
+  </div> <!-- /.container-fluid -->
+
+  <% include ../views/modules/user-panel/user-scripts %>
+  <script src="/js/app/user-documents.js"></script>
+</body>
+</html>

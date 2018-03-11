@@ -1,0 +1,22 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "[DESCRIPCION ACA]",
+    "version": "0.0.1",
+    "title": "[TITULO ACA]",
+    "contact": {
+      "email": "dev@dev.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/swagger-api/swagger-ui/blob/master/LICENSE"
+    }
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "produces": ["application/json"],
+  "schemes": ["http"],
+  "paths": {
+    
+  }
+}
