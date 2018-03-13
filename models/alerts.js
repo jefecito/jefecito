@@ -1,7 +1,9 @@
-var mongoose = require('mongoose');
+// require
+const mongoose = require('mongoose')
 
-var alertsSchema = mongoose.Schema({
-  date:{
+// declare schmea
+const alertsSchema = mongoose.Schema({
+  date: {
     created: Date,
     viewed: Date
   },
@@ -10,6 +12,6 @@ var alertsSchema = mongoose.Schema({
     default: false
   },
   msg: String,
-});
+})
 
-module.exports = mongoose.model('Alert', alertsSchema);
+module.exports = mongoose.model('Alert', alertsSchema)

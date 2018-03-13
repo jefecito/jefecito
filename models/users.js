@@ -1,10 +1,13 @@
-/* jshint esversion: 6 */
-var mongoose = require('mongoose'),
-    bcrypt = require('bcrypt-nodejs'),
-    Upload = require('../models/uploads'),
-    Alert = require('../models/alerts');
+// require
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt-nodejs')
 
-var userSchema = mongoose.Schema({
+// models
+const Upload = mongoose.model('Upload')
+const Alert = mongoose.model('Alert')
+
+// declare schema
+const userSchema = mongoose.Schema({
   local: {
     createdAt: {
       type: Date,
@@ -66,7 +69,7 @@ var userSchema = mongoose.Schema({
   }
 });
 
-// methods ======================
+// schema methods ======================
 // generating a hash
 userSchema.methods.generateHash = password => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);

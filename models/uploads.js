@@ -1,6 +1,11 @@
-var mongoose = require('mongoose');
+// require
+const mongoose = require('mongoose')
 
-var uploadSchema = mongoose.Schema({
+// models
+const User = mongoose.model('User')
+
+// declare schema
+const uploadSchema = mongoose.Schema({
   uploadedAt: Date,
   uploadedBy: {
     id: String,
@@ -26,10 +31,10 @@ var uploadSchema = mongoose.Schema({
       default: 'default'
     }
   },
-  downloadCounter : {
+  downloadCounter: {
     type: Number,
     default: 0
   }
-});
+})
 
-module.exports = mongoose.model('Upload', uploadSchema);
+module.exports = mongoose.model('Upload', uploadSchema)

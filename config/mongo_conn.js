@@ -1,15 +1,22 @@
-/* jshint esversion: 6 */
-var mongoose = require('mongoose'),
-    colors = require('colors'),
-    User = require('../models/users'),
-    cfg = require('./config.json');
+// require
+const mongoose = require('mongoose')
+const colors = require('colors')
+const cfg = require('./config.json')
 
-mongoose.connect('mongodb://127.0.0.1/'+cfg.appName, err => {
+// require models
+require('./models/alerts')
+require('./models/uplodas')
+require('./models/users')
+
+const User = mongoose.model('User')
+
+// mongoose.connect database
+mongoose.connect(`mongodb://127.0.0.1/${cfg.appName}`, err => {
   if(err)
-    console.log(('[+] MongoDB'+err).red);
+    console.log((`[+] MongoDB ${err}`).red);
   else {
     console.log('[+] Connected to MongoDB'.green);
-    console.log('[+] DB: ', cfg.appName);
+    console.log(`[+] DB: ${cfg.appName}`);
   }
 });
 
