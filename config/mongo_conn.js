@@ -29,17 +29,18 @@ User.findOne(FILTER, (err, user) => {
     console.log('err', err);
   else {
     if(!user) {
-      const newUser = new User({
+      let newUser = new User({
         local: {
           createdAt: Date.now(),
           username: 'admin',
           email: `admin@${cfg.appURL}`,
-          password: newUser.generateHash('cr4fty_p4ssw0rd!'),
           roles: ['admin'],
           isConfirmed: true,
           creationMethod: 'superadmin'
         }
       })
+      
+      newUser.password = newUser.generateHash('cr4fty_p4ssw0rd!')
 
       newUser.save(err => {
         if(err)
