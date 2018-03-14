@@ -1,10 +1,11 @@
-// require
+/**
+ * Requires
+ */
 const mongoose = require('mongoose')
 
-// models
-const User = mongoose.model('User')
-
-// declare schema
+/**
+ * Declare schema
+ */
 const uploadSchema = mongoose.Schema({
   uploadedAt: Date,
   uploadedBy: {

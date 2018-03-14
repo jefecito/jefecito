@@ -1,8 +1,12 @@
-// require
+/**
+ * Requires
+ */
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt-nodejs')
 
-// declare schema
+/**
+ * Declare schema
+ */
 const userSchema = mongoose.Schema({
   local: {
     createdAt: {
@@ -65,17 +69,21 @@ const userSchema = mongoose.Schema({
   }
 }, {
   collection: 'User'
-});
+})
 
-// schema methods ======================
-// generating a hash
+/**
+ * Schema Methods:
+ * Generating a hash
+ */
 userSchema.methods.generateHash = password => {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null)
+}
 
-// checking if password is valid
+/**
+ * Checking if password is valid
+ */
 userSchema.methods.validPassword = password => {
-  return bcrypt.compareSync(password, this.local.password);
-};
+  return bcrypt.compareSync(password, this.local.password)
+}
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema)

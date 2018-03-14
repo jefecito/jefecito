@@ -1,7 +1,11 @@
-// require
+/**
+ * Requires
+ */
 const mongoose = require('mongoose')
 
-// declare schmea
+/**
+ * Declare schema
+ */
 const alertsSchema = mongoose.Schema({
   date: {
     created: Date,

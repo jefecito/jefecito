@@ -1,24 +1,34 @@
-// require
+/* jshint esversion: 6 */
+
+/**
+ * Requires
+ */
 const mongoose = require('mongoose')
 const colors = require('colors')
 const cfg = require('./config.json')
 
-// require models
-require('../models/alerts')
-require('../models/uploads')
-require('../models/users')
+/**
+ * Import Models
+ */
+require('../models/alertModel')
+require('../models/uploadModel')
+require('../models/userModel')
 
-// mongoose.connect database
+/**
+ * Connect mongoose database
+ */
 mongoose.connect(`mongodb://127.0.0.1/${cfg.appName}`, err => {
   if(err)
-    console.log((`[+] MongoDB ${err}`).red);
+    console.log((`[+] MongoDB ${err}`).red)
   else {
-    console.log('[+] Connected to MongoDB'.green);
-    console.log(`[+] DB: ${cfg.appName}`);
+    console.log('[+] Connected to MongoDB'.green)
+    console.log(`[+] DB: ${cfg.appName}`)
   }
-});
+})
 
-// create superadmin user
+/**
+ * Create superadmin user
+ */
 const User = mongoose.model('User')
 const FILTER = {
   'local.creationMethod': 'superadmin'
