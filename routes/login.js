@@ -38,28 +38,30 @@ const jwt           = require('jsonwebtoken')
       res.redirect('/dashboard');
   }); // GET /login
 
-  router.post('/login', mw.rateLimiter, (req, res, next) => {
-    passport.authenticate('local-login', (err, user, info) => {
-      if(err)
-        return next(err);
-
-      if(!user)
-        return res.json({success: false, data: 'Correo o contraseña incorrectos'});
-
-      req.logIn(user, (err) => {
+  /*
+    router.post('/login', mw.rateLimiter, (req, res, next) => {
+      passport.authenticate('local-login', (err, user, info) => {
         if(err)
           return next(err);
 
-        if(!req.user.local.isConfirmed)
-          return res.json({success: false, data: 'Usuario no confirmado'});
-        else {
-          return (req.user.local.roles.indexOf('admin') == -1) ?
-            res.json({success: true, data: {redirect: '/user', user: user}}) :
-            res.json({success: true, data: {redirect: '/dashboard', user: user}});
-        }
-      });
-    })(req, res, next);
-  }); // POST /login
+        if(!user)
+          return res.json({success: false, data: 'Correo o contraseña incorrectos'});
+
+        req.logIn(user, (err) => {
+          if(err)
+            return next(err);
+
+          if(!req.user.local.isConfirmed)
+            return res.json({success: false, data: 'Usuario no confirmado'});
+          else {
+            return (req.user.local.roles.indexOf('admin') == -1) ?
+              res.json({success: true, data: {redirect: '/user', user: user}}) :
+              res.json({success: true, data: {redirect: '/dashboard', user: user}});
+          }
+        });
+      })(req, res, next);
+    }); // POST /login
+  */
 
   // TWITTER LOGIN
   // ==============================================
@@ -80,7 +82,7 @@ const jwt           = require('jsonwebtoken')
           if(user.local.roles.indexOf('admin') == -1)
             res.redirect('/usuario/perfil/'+req.user._id);
           else
-            res.redirect('/admin/panel');
+            res.redirect('/dashboard');
         }
       });
     })(req, res, next);
@@ -172,10 +174,12 @@ const jwt           = require('jsonwebtoken')
 // LOGOUT
 // ==============================================
 // ==============================================
-router.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
-});
+/*
+  router.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+  });
+*/
 
 
 // REGISTER STRATEGIE
