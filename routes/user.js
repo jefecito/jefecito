@@ -3,21 +3,21 @@
 // REQUIREs
 // ==============================================
 // ==============================================
-var express   = require('express');
-var passport  = require('passport');
-var router    = express.Router();
-var User      = require('../models/users');
-var Upload    = require('../models/uploads');
-var mw        = require('../middlewares/app');
-var multer    = require('multer');
-var validator = require('validator');
-var fs        = require('fs');
-var mkdirp    = require('mkdirp');
-var crypto    = require('crypto');
-var mongoose  = require('mongoose');
-var appConfig = require('../config/config');
-var Alert     = require('../models/alerts');
-var utils     = require('../lib/utils');
+const express   = require('express')
+const passport  = require('passport')
+const router    = express.Router()
+const mongoose = require('mongoose')
+const User = mongoose.model('User')
+const Upload = mongoose.model('Upload')
+const Alert     = mongoose.model('Alert')
+const mw        = require('../middlewares/app')
+const multer    = require('multer')
+const validator = require('validator')
+const fs        = require('fs')
+const mkdirp    = require('mkdirp')
+const crypto    = require('crypto')
+const appConfig = require('../config/config')
+const utils     = require('../lib/utils')
 
 
 

@@ -9,7 +9,8 @@ var passport      = require('passport');
 var bcrypt        = require('bcrypt-nodejs');
 var validator     = require('validator');
 var mw            = require('../middlewares/app');
-var User          = require('../models/users');
+const mongoose    = require('mongoose')
+const User        = mongoose.model('User')
 var nodemailer    = require('nodemailer');
 var path          = require('path');
 // var EmailTemplate = require('email-templates').EmailTemplate;
@@ -38,6 +39,7 @@ var jwt           = require('jsonwebtoken');
   }); // GET /login
 
   router.post('/login', mw.rateLimiter, (req, res, next) => {
+    console.log('aca')
     passport.authenticate('local-login', (err, user, info) => {
       if(err)
         return next(err);
@@ -45,13 +47,16 @@ var jwt           = require('jsonwebtoken');
       if(!user)
         return res.json({success: false, data: 'Correo o contraseña incorrectos'});
 
+        console.log('aca2')
       req.logIn(user, (err) => {
         if(err)
           return next(err);
 
+          console.log('aca3')
         if(!req.user.local.isConfirmed)
           return res.json({success: false, data: 'Usuario no confirmado'});
         else {
+          console.log('aca4')
           return (req.user.local.roles.indexOf('admin') == -1) ?
             res.json({success: true, data: {redirect: '/user', user: user}}) :
             res.json({success: true, data: {redirect: '/dashboard', user: user}});

@@ -3,25 +3,26 @@
 // REQUIREs
 // ==============================================
 // ==============================================
-var express       = require('express');
-var passport      = require('passport');
-var router        = express.Router();
-var User          = require('../models/users');
-var Upload        = require('../models/uploads');
-var mw            = require('../middlewares/app');
-var multer        = require('multer');
-var validator     = require('validator');
-var fs            = require('fs');
-var bcrypt        = require('bcrypt-nodejs');
-var randomstring  = require("randomstring");
-var path          = require('path');
-var appConfig     = require('../config/app');
-var nodemailer    = require('nodemailer');
+const express       = require('express')
+const passport      = require('passport')
+const router        = express.Router()
+const mongoose = require('mongoose')
+const User = mongoose.model('User')
+const Upload = mongoose.model('Upload')
+const mw            = require('../middlewares/app')
+const multer        = require('multer')
+const validator     = require('validator')
+const fs            = require('fs')
+const bcrypt        = require('bcrypt-nodejs')
+const randomstring  = require("randomstring")
+const path          = require('path')
+const appConfig     = require('../config/app')
+const nodemailer    = require('nodemailer')
 // var EmailTemplate = require('email-templates').EmailTemplate;
 // var resetEmail    = path.join(__dirname, '../templates', 'resetemail');
 // var emailTx       = new EmailTemplate(resetEmail);
-var transporter   = appConfig.getTransporter();
-var app           = require('../server');
+const transporter   = appConfig.getTransporter()
+const app           = require('../server')
 
 
 // API USUARIOS
@@ -157,8 +158,9 @@ var app           = require('../server');
                     }; // mailOptions
 
                     transporter.sendMail(mailOptions, (error, info) => {
-                      (error) ?
-                        console.log(error, info) :
+                      if (error)
+                        console.log(error, info);
+                      else
                         console.log('Message sent: ' + info.response);
                     }); // transporter.sendMail()
                   } // if/else

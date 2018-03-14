@@ -3,14 +3,14 @@
 // REQUIREs
 // ==============================================
 // ==============================================
-var express   = require('express');
-var passport  = require('passport');
-var router    = express.Router();
-var User      = require('../models/users');
-var mw        = require('../middlewares/app');
-var validator = require('validator');
-var jsonfile  = require('jsonfile');
-var appConfig = require('../config/config');
+const express   = require('express')
+const passport  = require('passport')
+const router    = express.Router()
+const mongoose  = require('mongoose')
+const validator = require('validator')
+const mw        = require('../middlewares/app')
+const jsonfile  = require('jsonfile')
+const appConfig = require('../config/config')
 
 
 // APP: Renderiza la vista de configuracion

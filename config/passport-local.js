@@ -1,9 +1,10 @@
 /* jshint esversion: 6 */
-var bcrypt = require('bcrypt-nodejs'),
-    passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy,
-    User = require('../models/users'),
-    validator = require('validator');
+const bcrypt = require('bcrypt-nodejs')
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+const validator = require('validator')
+const mongoose = require('mongoose')
+const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
   done(null, user);

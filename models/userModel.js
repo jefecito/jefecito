@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 /**
  * Requires
  */
@@ -7,7 +9,7 @@ const bcrypt = require('bcrypt-nodejs')
 /**
  * Declare schema
  */
-const userSchema = mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   local: {
     createdAt: {
       type: Date,
@@ -16,7 +18,8 @@ const userSchema = mongoose.Schema({
     username: String,
     email: {
       type: String,
-      unique: 'Users email must be unique'
+      unique: 'Users email must be unique',
+      required: 'User email is required'
     },
     password: String,
     jwt: String,
@@ -75,15 +78,15 @@ const userSchema = mongoose.Schema({
  * Schema Methods:
  * Generating a hash
  */
-userSchema.methods.generateHash = password => {
+UserSchema.methods.generateHash = password => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null)
 }
 
 /**
  * Checking if password is valid
  */
-userSchema.methods.validPassword = password => {
+UserSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.local.password)
 }
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model('User', UserSchema)

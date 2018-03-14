@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 /**
  * Requires
  */
@@ -6,7 +8,7 @@ const mongoose = require('mongoose')
 /**
  * Declare schema
  */
-const uploadSchema = mongoose.Schema({
+const uploadSchema = new mongoose.Schema({
   uploadedAt: Date,
   uploadedBy: {
     id: String,

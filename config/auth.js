@@ -1,3 +1,8 @@
+/* jshint esversion: 6 */
+
+/**
+ * Requires
+ */
 const appConfig = require('./app')
 
 module.exports = {
@@ -21,4 +26,4 @@ module.exports = {
     clientSecret: 'client-secret-here',
     callbackURL: `${appConfig.getENV().url}/auth/linkedin/callback`
   }
-};
+}

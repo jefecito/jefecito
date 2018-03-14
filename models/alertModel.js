@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 /**
  * Requires
  */
@@ -6,7 +8,7 @@ const mongoose = require('mongoose')
 /**
  * Declare schema
  */
-const alertsSchema = mongoose.Schema({
+const alertsSchema = new mongoose.Schema({
   date: {
     created: Date,
     viewed: Date

@@ -1,8 +1,9 @@
 /* jshint esversion: 6 */
-var passport = require('passport'),
-    GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-    User = require('../models/users'),
-    configAuth = require('./auth');
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
+const configAuth = require('./auth')
+const mongoose = require('mongoose')
+const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
   done(null, user.id);

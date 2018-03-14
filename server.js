@@ -5,35 +5,28 @@ const cookieTime = 1000 * 60 * 60 * 2
 
 // Require
 // ====================================================================
-const bodyParser   = require('body-parser')
-const compression  = require('compression')
+const bodyParser = require('body-parser')
+const compression = require('compression')
 const cookieParser = require('cookie-parser')
-const express      = require('express')
-const favicon      = require('serve-favicon')
-const fs           = require('fs')
-const http         = require('http')
-const https        = require('https')
-const logger       = require('morgan')
-const passport     = require('passport')
-const session      = require('express-session')
-const MongoStore   = require('connect-mongo')(session)
-const path         = require('path')
-const helmet       = require('helmet')
-const swaggerUi    = require('swaggerize-ui')
-const jsonfile     = require('jsonfile')
+const express = require('express')
+const favicon = require('serve-favicon')
+const fs = require('fs')
+const http = require('http')
+const https = require('https')
+const logger = require('morgan')
+const passport = require('passport')
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
+const path = require('path')
+const helmet = require('helmet')
+const swaggerUi = require('swaggerize-ui')
+const jsonfile = require('jsonfile')
 
 // Creates folder log
 if (!fs.existsSync('./logs')) {
   console.log('[+] logs folder created')
   fs.mkdirSync('./logs')
 }
-
-// Routes
-// =====================================================================
-const index = require('./routes/index')
-const login = require('./routes/login')
-const user  = require('./routes/user')
-const api   = require('./routes/api')
 
 // Express configuration
 // ======================================================================
@@ -157,6 +150,13 @@ app.use(session({
 
 app.use(passport.initialize())
 app.use(passport.session())
+
+// Routes
+// =====================================================================
+const index = require('./routes/index')
+const login = require('./routes/login')
+const user  = require('./routes/user')
+const api   = require('./routes/api')
 
 // Routes usage
 // ======================================================================

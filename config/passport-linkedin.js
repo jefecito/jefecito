@@ -1,8 +1,9 @@
 /* jshint esversion: 6 */
-var passport = require('passport'),
-    User = require('../models/users'),
-    LinkedInStrategy = require('passport-linkedin-oauth2').Strategy,
-    configAuth = require('./auth');
+const passport = require('passport')
+const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy
+const configAuth = require('./auth')
+const mongoose = require('mongoose')
+const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
   done(null, user.id);

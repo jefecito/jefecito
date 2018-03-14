@@ -1,8 +1,9 @@
 /* jshint esversion: 6 */
-var passport = require('passport'),
-    TwitterStrategy = require('passport-twitter').Strategy,
-    User = require('../models/users'),
-    configAuth = require('./auth');
+const passport = require('passport')
+const TwitterStrategy = require('passport-twitter').Strategy
+const configAuth = require('./auth')
+const mongoose = require('mongoose')
+const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
