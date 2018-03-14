@@ -2,10 +2,6 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt-nodejs')
 
-// models
-const Upload = mongoose.model('Upload')
-const Alert = mongoose.model('Alert')
-
 // declare schema
 const userSchema = mongoose.Schema({
   local: {

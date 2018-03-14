@@ -4,9 +4,9 @@ const colors = require('colors')
 const cfg = require('./config.json')
 
 // require models
-require('./models/alerts')
-require('./models/uplodas')
-require('./models/users')
+require('../models/alerts')
+require('../models/uploads')
+require('../models/users')
 
 // mongoose.connect database
 mongoose.connect(`mongodb://127.0.0.1/${cfg.appName}`, err => {
