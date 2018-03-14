@@ -4,7 +4,7 @@
  * Requires
  */
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt-nodejs')
+const bcrypt = require('bcrypt')
 
 /**
  * Declare schema
@@ -78,7 +78,8 @@ const UserSchema = new mongoose.Schema({
  * Schema Methods:
  * Generating a hash
  */
-UserSchema.methods.generateHash = password => {
+UserSchema.methods.generateHash = function(password) {
+  console.log('password: ', password);
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null)
 }
 

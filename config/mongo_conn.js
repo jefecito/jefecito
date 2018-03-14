@@ -49,8 +49,8 @@ User.findOne(FILTER, (err, user) => {
           creationMethod: 'superadmin'
         }
       })
-      
-      newUser.password = newUser.generateHash('cr4fty_p4ssw0rd!')
+
+      newUser.local.password = newUser.generateHash('cr4fty_p4ssw0rd')
 
       newUser.save(err => {
         if(err)
