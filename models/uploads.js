@@ -35,6 +35,8 @@ const uploadSchema = mongoose.Schema({
     type: Number,
     default: 0
   }
+}, {
+  collection: 'Upload'
 })
 
 module.exports = mongoose.model('Upload', uploadSchema)

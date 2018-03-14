@@ -63,6 +63,8 @@ const userSchema = mongoose.Schema({
     email: String,
     name: String
   }
+}, {
+  collection: 'User'
 });
 
 // schema methods ======================

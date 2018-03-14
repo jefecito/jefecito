@@ -12,6 +12,8 @@ const alertsSchema = mongoose.Schema({
     default: false
   },
   msg: String,
+}, {
+  collection: 'Alert'
 })
 
 module.exports = mongoose.model('Alert', alertsSchema)
