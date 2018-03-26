@@ -1,4 +1,8 @@
 /* jshint esversion: 6 */
+
+/**
+ * Requires
+ */
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
@@ -14,6 +18,9 @@ passport.deserializeUser((user, done) => {
   done(null, user)
 })
 
+/**
+ * Local
+ */
 passport.use('local-login', new LocalStrategy((username, password, done) => {
   if(validator.isEmail(username)) {
     const FILTER = {
@@ -24,7 +31,9 @@ passport.use('local-login', new LocalStrategy((username, password, done) => {
       if (err) {
         return done(err)
       } else if (!user) {
-        return done(null, false, {error: 'error en usuario/contraseña'})
+        return done(null, false, {
+          error: 'error en usuario/contraseña'
+        })
       } else if (!user.validPassword(password, user.local.password)) {
         return done(null, false, {
           error: 'Usuario o contraseñ incorrecta'

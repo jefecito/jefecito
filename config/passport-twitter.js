@@ -1,4 +1,8 @@
 /* jshint esversion: 6 */
+
+/**
+ * Requires
+ */
 const passport = require('passport')
 const TwitterStrategy = require('passport-twitter').Strategy
 const configAuth = require('./auth')
@@ -6,49 +10,62 @@ const mongoose = require('mongoose')
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
+  done(null, user.id)
+})
 
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
-    done(err, user);
-  });
-});
+    done(err, user)
+  })
+})
   
+/**
+ * Twitter
+ */
 passport.use(new TwitterStrategy({
   consumerKey: configAuth.twitterAuth.consumerKey,
   consumerSecret: configAuth.twitterAuth.consumerSecret,
   callbackURL: configAuth.twitterAuth.callbackURL
 }, (token, tokenSecret, profile, done) => {
   process.nextTick(() => {
-    User.findOne({'twitter.id': profile.id}, (err, user) => {
-      if(err)
-        return done(err);
-      if(user)
-        return done(null, user); 
-      else {
-        var newUser = new User();
+    let FILTER = {
+      'twitter.id': profile.id
+    }
 
-        newUser.twitter.id = profile.id;
-        newUser.twitter.token = token;
-        newUser.twitter.username = profile.displayName;
-        newUser.twitter.avatar = profile._json.profile_image_url_https;
+    User.findOne(FILTER, (err, user) => {
+      if (err) {
+        return done(err)
+      }
 
-        newUser.local.createdAt = Date.now();
-        newUser.local.roles = ['user'];
-        newUser.local.username = profile.displayName;
-        newUser.local.avatar = profile._json.profile_image_url_https;
-        newUser.local.creationMethod = 'tw';
-        newUser.local.isConfirmed = true;
+      if (user) {
+        return done(null, user)
+      } else {
+        const newUser = new User({
+          twitter: {
+            id: profile.id,
+            token: token,
+            username: profile.displayName,
+            avatar: profile._json.profile_image_url_https
+          },
+          local: {
+            createdAt: Date.now(),
+            roles: ['user'],
+            username: profile.displayName,
+            avatar: profile._json.profile_image_url_https,
+            creationMethod: 'tw',
+            isConfirmed: true
+          }
+        })
 
         newUser.save(err => {
-          if(err)
-            throw err;
+          if (err) {
+            throw err
+          }
 
           return done(null, newUser);
-        });
+        })
       }
-    });
-  });
-}));
+    })
+  })
+}))
 
