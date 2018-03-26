@@ -1,4 +1,8 @@
 /* jshint esversion: 6 */
+
+/**
+ * Requires
+ */
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const configAuth = require('./auth')
@@ -6,18 +10,18 @@ const mongoose = require('mongoose')
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
+  done(null, user.id)
+})
 
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
-    done(err, user);
-  });
-});
+    done(err, user)
+  })
+})
 
-// =========================================================================
-// FACEBOOK ================================================================
-// =========================================================================
+/**
+ * Facebook
+ */
 passport.use(new FacebookStrategy({
   clientID: configAuth.facebookAuth.clientID,
   clientSecret: configAuth.facebookAuth.clientSecret,
@@ -37,53 +41,69 @@ passport.use(new FacebookStrategy({
 }, (token, refreshToken, profile, done) => {
   process.nextTick(() => {
     User.findOne({'facebook.id': profile.id}, (err, user) => {
-      if(err)
-        return done(err);
-      if(user)
-        return done(null, user); // user found, return that user
-      else {
-        User.findOne({'local.email': profile.emails[0].value}, (err, user) => {
-          if(err)
-            return res.failure(-1, 'Error social', 200);
-          else if(!user) { //usuario local no existe
-            var newUser = new User();
+      if (err) {
+        return done(err)
+      }
 
-            newUser.facebook.id = profile.id; 
-            newUser.facebook.token = token;                
-            newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
-            newUser.facebook.email = profile.emails[0].value;
-            newUser.facebook.avatar = profile.photos[0].value;
-            
-            newUser.local.createdAt = Date.now();
-            newUser.local.roles = ['user'];
-            newUser.local.username = profile.name.givenName + ' ' + profile.name.familyName;
-            newUser.local.email = profile.emails[0].value;
-            newUser.local.avatar = profile.photos[0].value;
-            newUser.local.creationMethod = 'fb';
-            newUser.local.isConfirmed = true;
-            
+      if (user) {
+        // Devuelvo usuario encontrado
+        return done(null, user)
+      } else {
+        const FILTER = {
+          'local.email': profile.emails[0].value
+        }
+
+        User.findOne(FILTER, (err, user) => {
+          if (err) {
+            return res.failure(-1, 'Error social', 200)
+          } else if(!user) {
+            // Usuario local no existe
+            const newUser = new User({
+              facebook: {
+                id: profile.id,
+                token: token,
+                name: profile.name.givenName + ' ' + profile.name.familyName,
+                email: profile.emails[0].value,
+                avatar: profile.photos[0].value,
+              },
+              local: {
+                createdAt: Date.now(),
+                roles: ['user'],
+                username: profile.name.givenName + ' ' + profile.name.familyName,
+                email: profile.emails[0].value,
+                avatar: profile.photos[0].value,
+                creationMethod: 'fb',
+                isConfirmed: true
+              }
+            })
+
             newUser.save(err => {
-              if(err)
-                throw err;
+              if (err) {
+                throw err
+              }
 
-              return done(null, newUser);
-            });
-          } else { //usuario local ya existe
-            user.facebook.id = profile.id; 
-            user.facebook.token = token;
-            user.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
-            user.facebook.email = profile.emails[0].value;
-            user.facebook.avatar = profile.photos[0].value;
+              return done(null, newUser)
+            })
+          } else {
+            // Usuario local ya existe
+            user.facebook = {
+              id: profile.id,
+              token: token,
+              name: profile.name.givenName + ' ' + profile.name.familyName,
+              email: profile.emails[0].value,
+              avatar: profile.photos[0].value
+            }
 
             user.save((err, updatedUser) => {
-              if(err)
-                throw err;
+              if (err) {
+                throw err
+              }
 
-              return done(null, updatedUser);
-            });
+              return done(null, updatedUser)
+            })
           }
-        });
-      } //else social no existe
-    }); //findOne facebook.id
-  });
-}));
+        })
+      } // if/else
+    }) // User.findOne()
+  })
+}))
