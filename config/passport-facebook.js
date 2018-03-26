@@ -40,7 +40,11 @@ passport.use(new FacebookStrategy({
   ]
 }, (token, refreshToken, profile, done) => {
   process.nextTick(() => {
-    User.findOne({'facebook.id': profile.id}, (err, user) => {
+    let FILTER = {
+      'facebook.id': profile.id
+    }
+
+    User.findOne(FILTER, (err, user) => {
       if (err) {
         return done(err)
       }
@@ -49,7 +53,7 @@ passport.use(new FacebookStrategy({
         // Devuelvo usuario encontrado
         return done(null, user)
       } else {
-        const FILTER = {
+        FILTER = {
           'local.email': profile.emails[0].value
         }
 

@@ -1,4 +1,8 @@
 /* jshint esversion: 6 */
+
+/**
+ * Requires
+ */
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 const configAuth = require('./auth')
@@ -6,18 +10,18 @@ const mongoose = require('mongoose')
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
+  done(null, user.id)
+})
 
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
-    done(err, user);
-  });
-});
+    done(err, user)
+  })
+})
 
-// =========================================================================
-// GOOGLE ==================================================================
-// =========================================================================
+/**
+ * Google
+ */
 passport.use(new GoogleStrategy({
   clientID: configAuth.googleAuth.clientID,
   clientSecret: configAuth.googleAuth.clientSecret,
@@ -27,58 +31,72 @@ passport.use(new GoogleStrategy({
     'email'
   ]
 }, (token, refreshToken, profile, done) => {
-  // make the code asynchronous
-  // User.findOne won't fire until we have all our data back from Google
   process.nextTick(() => {
-    // try to find the user based on their google id
-    User.findOne({'google.id': profile.id}, (err, user) => {
-      if(err)
-        return done(err);
-      if(user)
-        return done(null, user);
-      else {
-        var newUser = new User();
+    let FILTER = {
+      'google.id': profile.id
+    }
 
-        User.findOne({'local.email': profile.emails[0].value}, (err, user) => {
-          if(err)
-            return res.failure(-1, 'Error social', 200);
-          else if(!user) { //usuario local no existe
-            var newUser = new User();
+    User.findOne(FILTER, (err, user) => {
+      if (err) {
+        return done(err)
+      }
 
-            newUser.google.id = profile.id;
-            newUser.google.token = token;
-            newUser.google.name = profile.displayName;
-            newUser.google.email = profile.emails[0].value;
+      if (user) {
+        return done(null, user)
+      } else {
+        FILTER = {
+          'local.email': profile.emails[0].value
+        }
 
-            newUser.local.createdAt = Date.now();
-            newUser.local.roles = ['user'];
-            newUser.local.username = profile.displayName;
-            newUser.local.email = profile.emails[0].value;
-            newUser.local.avatar = profile.photos[0].value;
-            newUser.local.creationMethod = 'go';
-            newUser.local.isConfirmed = true;
+        User.findOne(FILTER, (err, user) => {
+          if (err) {
+            return res.failure(-1, 'Error social', 200)
+          } else if(!user) {
+            // Usuario local no existe
+            const newUser = new User({
+              google: {
+                id: profile.id,
+                token: token,
+                name: profile.displayName,
+                email: profile.emails[0].value
+              },
+              local: {
+                createdAt: Date.now(),
+                roles: ['user'],
+                username: profile.displayName,
+                email: profile.emails[0].value,
+                avatar: profile.photos[0].value,
+                creationMethod: 'go',
+                isConfirmed: true
+              }
+            })
 
             newUser.save(err => {
-              if(err)
-                throw err;
+              if (err) {
+                throw err
+              }
 
-              return done(null, newUser);
-            });
-          } else { //usuario local existe
-            user.google.id = profile.id;
-            user.google.token = token;
-            user.google.name = profile.displayName;
-            user.google.email = profile.emails[0].value; // pull the first email
+              return done(null, newUser)
+            })
+          } else {
+            // Usuario local existe
+            user.google = {
+              id: profile.id,
+              token: token,
+              name: profile.displayName,
+              email: profile.emails[0].value // pull the first email
+            }
 
             user.save((err, updatedUser) => {
-              if(err)
-                throw err;
+              if (err) {
+                throw err
+              }
 
               return done(null, updatedUser);
-            });
-          } //else usuario local existe
-        }); //findOne
-      } //else red social 
-    });
-  });
-}));
+            })
+          } // if/else
+        }) // User.findOne()
+      } // if/else
+    })
+  })
+}))
