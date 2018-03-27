@@ -169,3 +169,42 @@ exports.updateEmailUsername = (req, res, next) => {
       })
   } // if/else
 }
+
+/**
+ * Agrega o remueve los privilegios de administrador
+ * de un usuario específico (id)
+ */
+exports.toggleAdminPriviliges = (req, res, next) => {
+  const B = req.body
+
+  if (!B.id) {
+    return res.failure(-1, 'Parámetros Insuficientes', 200)
+  } else {
+    const role = B.toAdmin ?
+      ['admin'] :
+      ['user']
+
+    const FILTER = {
+      _id: B.id
+    }
+
+    const UPDATE = {
+      $set: {
+        'local.roles': role
+      }
+    }
+
+    const EXTRA = {
+      new: true,
+      safe: true
+    }
+
+    User.findOneAndUpdate(FILTER, UPDATE, EXTRAS, (err, userUpdated) => {
+      if (err) {
+        return res.failure(-1, err, 200)
+      } else {
+        return res.success(userUpdated, 200)
+      }
+    })
+  }
+}

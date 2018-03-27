@@ -183,32 +183,6 @@ const app           = require('../server')
     }); // User.find()
   }); // GET /api/admins
 
-  // Agrega privilegios de administrador
-  // ==============================================
-  router.put('/api/user/toAdmin', mw.isAdmin, (req, res) => {
-    if(req.body.id === undefined)
-      return res.failure(-1, 'Parámetros Insuficientes', 200);
-    
-    User.update({_id: req.body.id}, {'local.roles': ['admin']}, (err, data) => {
-      return (err) ?
-        res.failure(-1, err, 200) :
-        res.success('Admininistrador agregado', 200);
-    }); // User.update()
-  }); // PUT /api/user/toAdmin
-
-  // Remueve privilegios de administrador
-  // ==============================================
-  router.put('/api/user/toUser', mw.isAdmin, (req, res) => {
-    if(req.body.id === undefined)
-      return res.failure(-1, 'Parámetros Insuficientes', 200);
-
-    User.update({_id: req.body.id}, {'local.roles': ['user']}, (err, data) => {
-      return (err) ?
-        res.failure(-1, err, 200) :
-        res.success('Admininistrador removido', 200);
-    }); // User.update()
-  }); // PUT /api/user/toUser
-
 // API DOCUMENTOS
 // ==============================================
 // ==============================================

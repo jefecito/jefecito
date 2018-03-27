@@ -192,6 +192,12 @@ const utils     = require('../lib/utils')
 // USUARIOS RENDER VISTAS
 // ==============================================
 // ==============================================
+  router.get('/', (req, res) => {
+    res.render('index', {
+      app: appConfig
+    });
+  }); // GET /
+
   router.get('/user', mw.requireLogin, (req, res) => {
     res.render('user', {
       app: appConfig,
