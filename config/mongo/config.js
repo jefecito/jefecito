@@ -10,9 +10,7 @@ const cfg = require('../app/config.json')
 /**
  * Import Models
  */
-require('../../models/userModel')
-require('../../models/alertModel')
-require('../../models/uploadModel')
+require('../../models/index')
 
 /**
  * Connect mongoose database
@@ -35,10 +33,10 @@ const FILTER = {
 }
 
 User.findOne(FILTER, (err, user) => {
-  if(err)
-    console.log('err', err);
-  else {
-    if(!user) {
+  if (err) {
+    console.log('err', err)
+  } else {
+    if (!user) {
       let newUser = new User({
         local: {
           createdAt: Date.now(),
@@ -53,9 +51,9 @@ User.findOne(FILTER, (err, user) => {
       newUser.local.password = newUser.generateHash('cr4fty_p4ssw0rd')
 
       newUser.save(err => {
-        if(err)
+        if (err) {
           console.log('err creating admin user', err)
-        else {
+        } else {
           console.log('')
           console.log('======================')
           console.log('Admin user created')

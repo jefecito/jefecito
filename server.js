@@ -129,11 +129,10 @@ if (cfg.configured === false) {
   require('./config/mongo/config')
 }
 
-require('./config/passport/local')
-require('./config/passport/facebook')
-// require('./config/passport/twitter')
-// require('./config/passport/linkedin')
-require('./config/passport/google')
+/**
+ * Require local and social network passport
+ */
+require('./config/passport/index')
 
 /**
  * View engine setup
