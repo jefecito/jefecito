@@ -5,24 +5,24 @@
  */
 const express = require('express')
 const nodemailer = require('nodemailer')
-const app = express()
-const PORT = app.get('port')
+const PORT = express().get('port')
+const CONFIG = require('./config')
 
 /**
  * App Module
  */
 module.exports = {
-  name: '',
-  domain: '',
+  name: CONFIG.appName,
+  domain: CONFIG.appURL,
   url: 'http://',
   dev: {
     url: `http://localhost:${PORT}`
   },
-  production:{
+  production: {
     url: 'http://'
   },
   jwtSecret: '',
-  getTransporter: () => {
+  getTransporter () {
     return nodemailer.createTransport({
       host: '',
       port: 465,
@@ -33,7 +33,7 @@ module.exports = {
       }
     })
   },
-  getENV: function () {
+  getENV () {
     if (process.env.NODE_ENV == 'production') {
       return this.production
     } else {

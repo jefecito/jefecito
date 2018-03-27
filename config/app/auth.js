@@ -11,17 +11,17 @@ module.exports = {
     clientSecret: 'client-secret-here',
     callbackURL: `${appConfig.getENV().url}/auth/facebook/callback`
   },
-  twitterAuth : {
+  twitterAuth: {
     consumerKey: 'client-id-here',
     consumerSecret: 'client-secret-here',
     callbackURL: `${appConfig.getENV().url}/auth/twitter/callback`
   },
-  googleAuth : {
+  googleAuth: {
     clientID: 'client-id-here',
     clientSecret: 'client-secret-here',
     callbackURL: `${appConfig.getENV().url}/auth/google/callback`
   },
-  linkedinAuth : {
+  linkedinAuth: {
     clientID: 'client-id-here',
     clientSecret: 'client-secret-here',
     callbackURL: `${appConfig.getENV().url}/auth/linkedin/callback`

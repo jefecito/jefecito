@@ -1,10 +1,12 @@
-// Variables
-// ====================================================================
+/**
+ * Variables
+ */
 const cacheTime = 86400000 * 30
 const cookieTime = 1000 * 60 * 60 * 2
 
-// Require
-// ====================================================================
+/**
+ * Requires
+ */
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
@@ -22,14 +24,17 @@ const helmet = require('helmet')
 const swaggerUi = require('swaggerize-ui')
 const jsonfile = require('jsonfile')
 
-// Creates folder log
+/**
+ * Creates folder log
+ */
 if (!fs.existsSync('./logs')) {
   console.log('[+] logs folder created')
   fs.mkdirSync('./logs')
 }
 
-// Express configuration
-// ======================================================================
+/**
+ * Express configuration
+ */
 const app = express()
 
 app.set('views', path.join(__dirname, 'views'))
@@ -41,14 +46,16 @@ app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: cacheTime
 }))
 
-// Error log managment
-// ======================================================================
+/**
+ * Error log management
+ */
 let errorLogStream = fs.createWriteStream(__dirname + '/logs/error.log', {
   flags: 'a'
 })
 
-// Error handling, avoiding crash
-// ======================================================================
+/**
+ * Error handling, avoiding crash
+ */
 process.on('uncaughtException', (err, req, res, next) => {
   let date = new Date()
   console.error(`+++++++ ${date} error found, logging event +++++++ `)
@@ -57,12 +64,14 @@ process.on('uncaughtException', (err, req, res, next) => {
   return
 })
 
-// Helment security lib
-// ======================================================================
+/**
+ * Helment security lib
+ */
 app.use(helmet())
 
-// Response definition
-// ======================================================================
+/**
+ * Response definition
+ */
 app.use((req, res, next) => {
   res.success = (data, status) => {
     return res.status(status ? status : 200).send({
@@ -85,12 +94,13 @@ app.use((req, res, next) => {
   next()
 })
 
-// Compress middleware to gzip content
-// ======================================================================
+/**
+ * Compress middleware to gzip content
+ */
 app.use(compression())
 // app.use(favicon(__dirname + '/public/img/favicon.png'))
 
-//INITIAL JEFECITO CONFIG
+// INITIAL JEFECITO CONFIG
 let file = './config/app/config.json'
 const cfg = require(file)
 
@@ -121,12 +131,13 @@ if (cfg.configured === false) {
 
 require('./config/passport/local')
 require('./config/passport/facebook')
-//require('./config/passport/twitter')
-//require('./config/passport/linkedin')
+// require('./config/passport/twitter')
+// require('./config/passport/linkedin')
 require('./config/passport/google')
 
-// View engine setup
-// ======================================================================
+/**
+ * View engine setup
+ */
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: false
@@ -153,15 +164,17 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-// Routes
-// =====================================================================
+/**
+ * Routes
+ */
 const index = require('./routes/index')
 const login = require('./routes/login')
-const user  = require('./routes/user')
-const api   = require('./routes/api')
+const user = require('./routes/user')
+const api = require('./routes/api')
 
-// Routes usage
-// ======================================================================
+/**
+ * Routes usage
+ */
 app.use('/', index)
 app.use('/', login)
 app.use('/', user)
@@ -177,23 +190,26 @@ app.use('/internal/docs', swaggerUi({
   docs: '/api-docs'
 }))
 
-// Disable server banner header
-// ======================================================================
+/**
+ * Disable server banner header
+ */
 app.disable('x-powered-by')
 
-// Catch 404 and forward to error handler
-// ======================================================================
+/**
+ * Catch 404 and forward to error handler
+ */
 app.use((req, res, next) => {
   var err = new Error('Not Found')
   err.status = 404
   next(err)
 })
 
-// Error Handlers
-// ======================================================================
-// Development error handler
-// Will print stacktrace
-// ======================================================================
+/**
+ * Error Handlers
+ * 
+ * Development error handler
+ * Will print stacktrace
+ */
 if (process.env.NODE_ENV === 'development') {
   app.use((err, req, res, next) => {
     res.status(err.status || 500)
@@ -204,9 +220,10 @@ if (process.env.NODE_ENV === 'development') {
   })
 }
 
-// Production error handler
-// No stacktraces leaked to user
-// ======================================================================
+/**
+ * Production error handler
+ * No stacktraces leaked to user
+ */
 app.use((err, req, res, next) => {
   res.status(err.status || 500)
   res.render('error', {
@@ -215,8 +232,9 @@ app.use((err, req, res, next) => {
   })
 })
 
-// Firing Up express
-// ====================================================================
+/**
+ * Firing Up express
+ */
 app.set('port', process.env.PORT || 3000)
 
 const server = http.createServer(app).listen(app.get('port'), '127.0.0.1', () => {
