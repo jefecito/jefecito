@@ -191,6 +191,7 @@ app.use('/', login)
 app.use('/', user)
 app.use('/', api)
 require('./routes/authRoute')(app)
+require('./routes/userRoute')(app)
 
 app.use('/api-docs', (req, res) => {
   res.json(require('./docs/api.json'))
