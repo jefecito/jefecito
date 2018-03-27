@@ -16,7 +16,7 @@ const fs            = require('fs')
 const bcrypt        = require('bcrypt')
 const randomstring  = require("randomstring")
 const path          = require('path')
-const appConfig     = require('../config/app')
+const appConfig     = require('../config/app/main')
 const nodemailer    = require('nodemailer')
 // var EmailTemplate = require('email-templates').EmailTemplate;
 // var resetEmail    = path.join(__dirname, '../templates', 'resetemail');
@@ -30,6 +30,7 @@ const app           = require('../server')
 // ==============================================
   // Trae todos los usuarios registrados
   // ==============================================
+  /*
   router.get('/api/users', mw.isAdmin, (req, res) => {
     var filter = {};
 
@@ -42,7 +43,7 @@ const app           = require('../server')
         res.success(data, 200);
     }); // User.find()
   }); // GET /api/users
-
+  
   // Elimina usuario
   // ==============================================
   router.delete('/api/user/delete', mw.isAdmin, (req, res) => {
@@ -55,6 +56,7 @@ const app           = require('../server')
         res.success('Usuario removido', 200);
     }); // User.remove()
   }); // DELETE /api/user/delete
+
 
   // Updatea Nombre de Usuario e Email
   // ==============================================
@@ -90,6 +92,7 @@ const app           = require('../server')
     } else
       return res.failure(-1, 'Solo puede actualizar su usuario', 200);
   }); // PUT /api/user/update
+*/
 
   // Usuario cambia contraseña manualmente
   // ==============================================

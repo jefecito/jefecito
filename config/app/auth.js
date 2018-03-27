@@ -3,7 +3,7 @@
 /**
  * Requires
  */
-const appConfig = require('./app')
+const appConfig = require('./main')
 
 module.exports = {
   facebookAuth: {

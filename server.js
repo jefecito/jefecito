@@ -91,8 +91,8 @@ app.use(compression())
 // app.use(favicon(__dirname + '/public/img/favicon.png'))
 
 //INITIAL JEFECITO CONFIG
-let file = './config/config.json'
-const cfg  = require(file)
+let file = './config/app/config.json'
+const cfg = require(file)
 
 if (cfg.configured === false) {
   console.log('[+] You have to configure the App')
@@ -116,12 +116,14 @@ if (cfg.configured === false) {
   })
 } else {
   console.log('[+] App Configured, connecting to DB ...')
-  require('./config/mongo_conn')
+  require('./config/mongo/config')
 }
 
-require('./config/passport-local')
-require('./config/passport-facebook')
-require('./config/passport-google')
+require('./config/passport/local')
+require('./config/passport/facebook')
+//require('./config/passport/twitter')
+//require('./config/passport/linkedin')
+require('./config/passport/google')
 
 // View engine setup
 // ======================================================================

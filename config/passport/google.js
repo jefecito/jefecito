@@ -5,7 +5,7 @@
  */
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
-const configAuth = require('./auth')
+const configAuth = require('../app/auth')
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
 

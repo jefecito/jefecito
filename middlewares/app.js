@@ -6,7 +6,7 @@
 const RateLimiter = require('limiter').RateLimiter
 const limiter = new RateLimiter(5, 'second', true)
 const jwt = require('jsonwebtoken')
-const appConfig = require('../config/app')
+const appConfig = require('../config/app/main')
 
 module.exports = {
   /**

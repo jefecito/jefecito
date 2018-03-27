@@ -16,7 +16,7 @@ const validator = require('validator')
 const fs        = require('fs')
 const mkdirp    = require('mkdirp')
 const crypto    = require('crypto')
-const appConfig = require('../config/config')
+const appConfig = require('../config/app/config')
 const utils     = require('../lib/utils')
 
 

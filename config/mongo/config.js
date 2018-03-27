@@ -5,14 +5,14 @@
  */
 const mongoose = require('mongoose')
 const colors = require('colors')
-const cfg = require('./config.json')
+const cfg = require('../app/config.json')
 
 /**
  * Import Models
  */
-require('../models/userModel')
-require('../models/alertModel')
-require('../models/uploadModel')
+require('../../models/userModel')
+require('../../models/alertModel')
+require('../../models/uploadModel')
 
 /**
  * Connect mongoose database

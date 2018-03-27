@@ -16,8 +16,8 @@ const path          = require('path')
 // const EmailTemplate = require('email-templates').EmailTemplate;
 // const confirmEmail  = path.join(__dirname, '../templates', 'confirmemail');
 // const emailConfirm  = new EmailTemplate(confirmEmail);
-const appConfig     = require('../config/config')
-const emailConfig   = require('../config/app')
+const appConfig     = require('../config/app/config')
+const emailConfig   = require('../config/app/main')
 const transporter   = emailConfig.getTransporter()
 const jwt           = require('jsonwebtoken')
 

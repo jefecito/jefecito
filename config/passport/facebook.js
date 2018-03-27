@@ -5,7 +5,7 @@
  */
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
-const configAuth = require('./auth')
+const configAuth = require('../app/auth')
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
 

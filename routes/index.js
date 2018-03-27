@@ -10,7 +10,7 @@ const mongoose  = require('mongoose')
 const validator = require('validator')
 const mw        = require('../middlewares/app')
 const jsonfile  = require('jsonfile')
-const appConfig = require('../config/config')
+const appConfig = require('../config/app/config')
 
 
 // APP: Renderiza la vista de configuracion
