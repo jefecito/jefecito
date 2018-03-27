@@ -100,34 +100,46 @@ app.use((req, res, next) => {
 app.use(compression())
 // app.use(favicon(__dirname + '/public/img/favicon.png'))
 
-// INITIAL JEFECITO CONFIG
-let file = './config/app/config.json'
-const cfg = require(file)
+/*
+  // INITIAL JEFECITO CONFIG
+  let file = './config/app/config.json'
+  const cfg = require(file)
 
-if (cfg.configured === false) {
-  console.log('[+] You have to configure the App')
+  if (cfg.configured === false) {
+    console.log('[+] You have to configure the App')
 
-  app.use((req, res, next) => {
-    jsonfile.readFile(file, (err, f) => {
-      if (err) {
-        return res.failure(-1, err, 200)
-      } else {
-        if (f.configured === false) {
-          if (req.method == "POST") {
-            next()
-          } else {
-            return res.render("appConfig")
-          }
+    app.use((req, res, next) => {
+      jsonfile.readFile(file, (err, f) => {
+        if (err) {
+          return res.failure(-1, err, 200)
         } else {
-          next()
-        }
-      } // if/else
+          if (f.configured === false) {
+            if (req.method == "POST") {
+              next()
+            } else {
+              return res.render("appConfig")
+            }
+          } else {
+            next()
+          }
+        } // if/else
+      })
     })
-  })
-} else {
-  console.log('[+] App Configured, connecting to DB ...')
-  require('./config/mongo/config')
-}
+  } else {
+    console.log('[+] App Configured, connecting to DB ...')
+    require('./config/mongo/config')
+  }
+*/
+
+/**
+ * Require Mongo configuration
+ */
+require('./config/mongo/config')
+
+/**
+ * Require app configuration
+ */
+const APP = require('./config/app/main')
 
 /**
  * Require local and social network passport
@@ -141,10 +153,10 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: false
 }))
-app.use(cookieParser(cfg.appName))
+app.use(cookieParser(APP.name))
 
 app.use(session({
-  name: cfg.appName,
+  name: APP.name,
   secret:'some_secret',
   saveUninitialized: true,
   resave: true,
@@ -152,7 +164,7 @@ app.use(session({
     maxAge: cookieTime
   },
   store: new MongoStore({
-    url: `mongodb://localhost/${cfg.appName}`,
+    url: `mongodb://localhost/${APP.name}`,
     host: 'localhost',
     collection: 'sessions',
     autoReconnect: true,
@@ -237,7 +249,7 @@ app.use((err, req, res, next) => {
 app.set('port', process.env.PORT || 3000)
 
 const server = http.createServer(app).listen(app.get('port'), '127.0.0.1', () => {
-  console.log(`${cfg.appName} server listening on port ${app.get('port')}`)
+  console.log(`${APP.name} server listening on port ${app.get('port')}`)
 })
 
 module.exports = app
