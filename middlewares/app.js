@@ -6,7 +6,7 @@
 const RateLimiter = require('limiter').RateLimiter
 const limiter = new RateLimiter(5, 'second', true)
 const jwt = require('jsonwebtoken')
-const appConfig = require('../config/app/main')
+const APP = require('../config/app/main')
 
 module.exports = {
   /**
@@ -18,12 +18,14 @@ module.exports = {
    */
   requireLogin: (req, res, next) => {
     if (!req.isAuthenticated()) {
-      if (req.method == 'GET')
+      if (req.method == 'GET') {
         return res.redirect('/login')
-      else if (req.method == 'POST')
+      } else if (req.method == 'POST') {
         return res.failure(-1, 'Unauthorized request', 403)
-    } else
+      }
+    } else {
       next()
+    }
   },
 
   /**
@@ -35,15 +37,17 @@ module.exports = {
    */
   isAdmin: (req, res, next) => {
     if (!req.isAuthenticated()) {
-      if (req.method == 'GET')
+      if (req.method == 'GET') {
         return res.redirect('/login')
-      else if (req.method == 'POST')
+      } else if (req.method == 'POST') {
         return res.failure(-1, 'Unauthorized', 403)
+      }
     } else if (req.user.local.roles.indexOf('admin') == -1) {
-      if(req.method == 'GET')
+      if(req.method == 'GET') {
         return res.redirect('/login')
-      else if (req.method == 'POST')
+      } else if (req.method == 'POST') {
         return res.failure(-1, 'Admin access needed', 403)
+      }
     } else {
       next()
     }
@@ -68,15 +72,17 @@ module.exports = {
       }
     })
   },
-    /**
+
+  /**
    * Middleware to check JWT access
    */
-  checkToken: function(req, res, next){
-    var token = req.body.token || req.query.token || req.headers['x-access-token']
+  checkToken: (req, res, next) => {
+    let token = req.body.token || req.query.token || req.headers['x-access-token']
+
     // decode token
     if (token) {
       // verifies secret and checks exp
-      jwt.verify(token, appConfig.jwtSecret, function(err, decoded) {      
+      jwt.verify(token, APP.jwtSecret, (err, decoded) => {
         if (err) {
           return res.failure(-1, 'Forbidden: Failed to verify token signature', 403)
         } else {
@@ -88,5 +94,5 @@ module.exports = {
     } else {
       return res.failure(-1, 'Forbidden: Token error', 403)
     }
-  }//checkToken
+  }
 }
