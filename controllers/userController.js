@@ -29,6 +29,52 @@ exports.getAllUsers = (req, res, next) => {
 }
 
 /**
+ * El administrador crea un usuario
+ */
+exports.createUser = (req, res, next) => {
+  const B = req.body
+  const username = validator.escape(B.username) || ''
+
+  if (validator.isEmail(B.email) && B.password.length > 7) {
+    return res.failure(-1, 'Parámetros insuficientes o incorrectos', 200)
+  }
+
+  const FILTER = {
+    'local.email': B.email
+  }
+
+  User.findOne(FILTER, (err, user) => {
+    if (err) {
+      return res.failure(-1, err, 200)
+    } else if (!user) {
+      let newUser = new User({
+        local: {
+          createdAt: Date.now(),
+          username: username,
+          email: B.email,
+          roles: ['user'],
+          creationMethod: 'local',
+          isConfirmed: true // set to false when email send added
+        }
+      })
+
+      newUser.local.password = newUser.generateHash(B.password)      
+
+      newUser.save((err, user) => {
+        if (err) {
+          return res.failure(-1, err, 200)
+        } else {
+          // Agregar envio de email
+          return res.success('Usuario registrado', 200)
+        }
+      })
+    } else {
+      return res.failure(-1, 'Ese correo existe, pruebe crearlo con otro', 200)
+    }
+  })
+}
+
+/**
  * Elimina un usuario específico según ID
  */
 exports.removeUser = (req, res, next) => {
