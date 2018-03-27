@@ -5,7 +5,7 @@
  */
 const mongoose = require('mongoose')
 const colors = require('colors')
-const cfg = require('../app/config.json')
+const CONFIG = require('../app/config')
 
 /**
  * Import Models
@@ -15,12 +15,12 @@ require('../../models/index')
 /**
  * Connect mongoose database
  */
-mongoose.connect(`mongodb://127.0.0.1/${cfg.appName}`, err => {
+mongoose.connect(`mongodb://127.0.0.1/${CONFIG.appName}`, err => {
   if(err)
     console.log((`[+] MongoDB ${err}`).red)
   else {
     console.log('[+] Connected to MongoDB'.green)
-    console.log(`[+] DB: ${cfg.appName}`)
+    console.log(`[+] DB: ${CONFIG.appName}`)
   }
 })
 
@@ -41,7 +41,7 @@ User.findOne(FILTER, (err, user) => {
         local: {
           createdAt: Date.now(),
           username: 'admin',
-          email: `admin@${cfg.appURL}`,
+          email: `admin@${CONFIG.appURL}`,
           roles: ['admin'],
           isConfirmed: true,
           creationMethod: 'superadmin'
@@ -58,7 +58,7 @@ User.findOne(FILTER, (err, user) => {
           console.log('======================')
           console.log('Admin user created')
           console.log('User: admin')
-          console.log('Email: ', `admin@${cfg.appURL}`)
+          console.log('Email: ', `admin@${CONFIG.appURL}`)
           console.log('Password:', 'cr4fty_p4ssw0rd')
           console.log('======================')
           console.log('')
