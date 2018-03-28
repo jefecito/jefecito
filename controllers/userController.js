@@ -62,7 +62,7 @@ exports.createUser = (req, res, next) => {
         }
       })
 
-      newUser.local.password = newUser.generateHash(B.password)      
+      newUser.local.password = newUser.generateHash(B.password)
 
       newUser.save((err, user) => {
         if (err) {

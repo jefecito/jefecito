@@ -1,20 +1,20 @@
 /* jshint esversion: 6 */
 
 /**
- * Requires
+ * Modules
  */
 const RateLimiter = require('limiter').RateLimiter
 const limiter = new RateLimiter(5, 'second', true)
 const jwt = require('jsonwebtoken')
+
+/**
+ * APP config
+ */
 const APP = require('../config/app/main')
 
 module.exports = {
   /**
    * Chequea que haya una sesión válida activa para hacer requests
-   * @param  {object}   req  request
-   * @param  {object}   res  response
-   * @param  {object}   next  next()
-   * @return {function}   Si hay sesión válida ejecuta la orden siguiente, sino un status 403 forbidden
    */
   requireLogin: (req, res, next) => {
     if (!req.isAuthenticated()) {
@@ -30,10 +30,6 @@ module.exports = {
 
   /**
    * Chequea si el usuario logueado es admin
-   * @param  {object}   req  request
-   * @param  {object}   res  response
-   * @param  {object}   next next()
-   * @return {function}       forbidden o ejecuta la próxima instrucción
    */
   isAdmin: (req, res, next) => {
     if (!req.isAuthenticated()) {
@@ -55,10 +51,6 @@ module.exports = {
 
   /**
    * Limita la cantidad de requests en un período de tiempo
-   * @param  {object}   req  request
-   * @param  {object}   res  response
-   * @param  {Function} next next()
-   * @return {function} Si no hay más tokens error, caso contrario ejecuta próxima instrucción
    */
   rateLimiter: (req, res, next) => {
     limiter.removeTokens(1, (err, remainingRequests) => {

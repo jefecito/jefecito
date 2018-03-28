@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-/*
+/**
  * Requires
  */
 const authController = require('../controllers/authController')
@@ -8,15 +8,22 @@ const passport = require('passport')
 const mw = require('../middlewares/app')
 
 module.exports = application => {
-  /*
+  /**
    * Iniciar Sesión Local
    */
   application
     .route('/login')
     .post(mw.rateLimiter, authController.logInLocal)
 
-  /*
-   * Ingresar con Twitter
+  /**
+   * Registrarse Localmente
+   */
+  application
+    .route('/register')
+    .post(mw.rateLimiter, authController.registerLocal)
+
+  /**
+   * Ingresar/Registrarse con Twitter
    */
   application
     .route('/auth/twitter')
@@ -26,8 +33,8 @@ module.exports = application => {
     .route('/auth/twitter/callback')
     .get(authController.logInTwitter)
 
-  /*
-   * Ingresar con Facebook
+  /**
+   * Ingresar/Registrarse con Facebook
    */
   application
     .route('/auth/facebook')
@@ -39,8 +46,8 @@ module.exports = application => {
     .route('/auth/facebook/callback')
     .get(authController.logInFacebook)
 
-  /*
-   * Ingresar con LinkedIn
+  /**
+   * Ingresar/Registrarse con LinkedIn
    */
   application
     .route('/auth/linkedin')
@@ -50,8 +57,8 @@ module.exports = application => {
     .route('/auth/linkedin/callback')
     .get(authController.logInLinkedIn)
 
-  /*
-   * Ingresar con Google
+  /**
+   * Ingresar/Registrarse con Google
    */
   application
     .route('/auth/google')
@@ -66,7 +73,7 @@ module.exports = application => {
     .route('/auth/google/callback')
     .get(authController.logInGoogle)
 
-  /*
+  /**
    * Cerrar Sesión
    */
   application

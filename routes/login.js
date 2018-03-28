@@ -47,66 +47,6 @@ router.get('/register', mw.rateLimiter, (req, res) => {
   });
 }); // GET /register
 
-router.post('/register', mw.rateLimiter, (req, res) => {
-  var username = validator.escape(req.body.username) || '',
-      password = req.body.password || '',
-      email    = req.body.email || '';
-
-  if(validator.isEmail(email) && password.length >7) {
-    User.findOne({'local.email': email}, (err, user) => {
-      if(err) {
-        return res.failure(-1, err, 200);
-      } else if(!user) {
-        var newUser = new User();
-        newUser.local.createdAt      = Date.now();
-        newUser.local.username       = username;
-        newUser.local.password       = bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
-        newUser.local.email          = email;
-        newUser.local.roles          = ['user'];
-        newUser.local.creationMethod = 'local';
-
-        newUser.save((err, data) => {
-          if(err) {
-            console.log('err on db user save', err);
-            return res.failure(-1, 'Error guardando el usuario', 200);
-          } else {
-            var info = {
-              app: appConfig,
-              username: data.local.username,
-              id: data._id
-            };
-
-            emailConfirm.render(info, (err, result) => {
-              if(err) {
-                console.log(err);
-              } else {
-                var mailOptions = {
-                  from: 'info@debugthebox.com',
-                  to: [email],
-                  subject: 'Bienvenido '+data.local.username+' a '+appConfig.appName,
-                  html: result.html
-                };
-
-                transporter.sendMail(mailOptions, (error, info) => {
-                  if(error)
-                    console.log(error, info);
-                  else
-                    console.log('Message sent: ' + info.response);
-                });
-              }
-            });
-
-            return res.success('Usuario registrado correctamente', 200);
-          }
-        });
-      } else
-        return res.failure(-1, 'Ese correo existe, pruebe registrarse con otro', 200);
-    });
-  } else
-    return res.failure(-1, 'Datos inválidos', 200);
-}); // POST /register
-
-
 // CONFIRMAR USUARIO
 // ==============================================
 // ==============================================
