@@ -100,37 +100,6 @@ app.use((req, res, next) => {
 app.use(compression())
 // app.use(favicon(__dirname + '/public/img/favicon.png'))
 
-/*
-  // INITIAL JEFECITO CONFIG
-  let file = './config/app/config.json'
-  const cfg = require(file)
-
-  if (cfg.configured === false) {
-    console.log('[+] You have to configure the App')
-
-    app.use((req, res, next) => {
-      jsonfile.readFile(file, (err, f) => {
-        if (err) {
-          return res.failure(-1, err, 200)
-        } else {
-          if (f.configured === false) {
-            if (req.method == "POST") {
-              next()
-            } else {
-              return res.render("appConfig")
-            }
-          } else {
-            next()
-          }
-        } // if/else
-      })
-    })
-  } else {
-    console.log('[+] App Configured, connecting to DB ...')
-    require('./config/mongo/config')
-  }
-*/
-
 /**
  * Require Mongo configuration
  */

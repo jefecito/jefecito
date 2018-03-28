@@ -16,9 +16,9 @@ require('../../models/index')
  * Connect mongoose database
  */
 mongoose.connect(`mongodb://127.0.0.1/${CONFIG.appName}`, err => {
-  if(err)
+  if (err) {
     console.log((`[+] MongoDB ${err}`).red)
-  else {
+  } else {
     console.log('[+] Connected to MongoDB'.green)
     console.log(`[+] DB: ${CONFIG.appName}`)
   }

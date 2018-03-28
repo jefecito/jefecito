@@ -10,17 +10,6 @@
       <h5>coded with <i class="fa fa-heart-o"></i> by debug-the-box</h5>
     </div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
-  <script>  
-      var socket = io.connect('http://localhost:3000');
-      socket.on('connect', function(data) {
-          socket.emit('join', 'Hello World from client');
-      });
-
-      socket.on('messages', function(data) {
-                      console.log(data);
-              });
-  </script>
   <% include ../views/modules/landing/scripts %>
 </body>
 </html>
