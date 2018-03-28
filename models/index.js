@@ -1,6 +1,18 @@
-/**
- * Imports Models
- */
-const userModel = require('./userModel')
-const alertModel = require('./alertModel')
-const uploadModel = require('./uploadModel')
+/* jshint esversion: 6 */
+
+module.exports = () => {
+  /**
+   * User model
+   */
+  require('./userModel')
+
+  /**
+   * Alert model
+   */
+  require('./alertModel')
+
+  /**
+   * Document model
+   */
+  require('./uploadModel')
+}

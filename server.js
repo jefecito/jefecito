@@ -5,7 +5,7 @@ const cacheTime = 86400000 * 30
 const cookieTime = 1000 * 60 * 60 * 2
 
 /**
- * Requires
+ * Modules
  */
 const bodyParser = require('body-parser')
 const compression = require('compression')
@@ -23,6 +23,11 @@ const path = require('path')
 const helmet = require('helmet')
 const swaggerUi = require('swaggerize-ui')
 const jsonfile = require('jsonfile')
+
+/**
+ * App configuration
+ */
+const APP = require('./config/app/main')
 
 /**
  * Creates folder log
@@ -106,14 +111,9 @@ app.use(compression())
 require('./config/mongo/config')
 
 /**
- * Require app configuration
- */
-const APP = require('./config/app/main')
-
-/**
  * Require local and social network passport
  */
-require('./config/passport/index')
+require('./config/passport/index')()
 
 /**
  * View engine setup
@@ -157,8 +157,7 @@ const api = require('./routes/api')
 app.use('/', login)
 app.use('/', user)
 app.use('/', api)
-require('./routes/authRoute')(app)
-require('./routes/userRoute')(app)
+require('./routes/index')(app)
 
 app.use('/api-docs', (req, res) => {
   res.json(require('./docs/api.json'))

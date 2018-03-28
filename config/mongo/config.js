@@ -14,7 +14,7 @@ const CONFIG = require('../app/config')
 /**
  * Import Models
  */
-require('../../models/index')
+require('../../models/index')()
 
 /**
  * Connect mongoose database
