@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 /**
- * Requires
+ * Variables
  */
 const APP = require('./main')
 

@@ -1,12 +1,20 @@
 /* jshint esversion: 6 */
 
 /**
- * Requires
+ * Modules
  */
 const passport = require('passport')
 const TwitterStrategy = require('passport-twitter').Strategy
-const configAuth = require('../app/auth')
 const mongoose = require('mongoose')
+
+/**
+ * Variables
+ */
+const AUTH = require('../app/auth')
+
+/**
+ * Models
+ */
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -23,9 +31,9 @@ passport.deserializeUser((id, done) => {
  * Twitter
  */
 passport.use(new TwitterStrategy({
-  consumerKey: configAuth.twitterAuth.consumerKey,
-  consumerSecret: configAuth.twitterAuth.consumerSecret,
-  callbackURL: configAuth.twitterAuth.callbackURL
+  consumerKey: AUTH.twitterAuth.consumerKey,
+  consumerSecret: AUTH.twitterAuth.consumerSecret,
+  callbackURL: AUTH.twitterAuth.callbackURL
 }, (token, tokenSecret, profile, done) => {
   process.nextTick(() => {
     let FILTER = {

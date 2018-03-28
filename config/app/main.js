@@ -1,10 +1,14 @@
 /* jshint esversion: 6 */
 
 /**
- * Requires
+ * Modules
  */
 const express = require('express')
 const nodemailer = require('nodemailer')
+
+/**
+ * Variables
+ */
 const PORT = express().get('port')
 const CONFIG = require('./config')
 

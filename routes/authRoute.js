@@ -1,10 +1,13 @@
 /* jshint esversion: 6 */
 
-module.exports = application => {
-  const authController = require('../controllers/authController')
-  const passport = require('passport')
-  const mw = require('../middlewares/app')
+/*
+ * Requires
+ */
+const authController = require('../controllers/authController')
+const passport = require('passport')
+const mw = require('../middlewares/app')
 
+module.exports = application => {
   /*
    * Iniciar Sesión Local
    */

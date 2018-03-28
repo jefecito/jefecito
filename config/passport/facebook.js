@@ -1,12 +1,20 @@
 /* jshint esversion: 6 */
 
 /**
- * Requires
+ * Modules
  */
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
-const configAuth = require('../app/auth')
 const mongoose = require('mongoose')
+
+/**
+ * Variables
+ */
+const AUTH = require('../app/auth')
+
+/**
+ * Models
+ */
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -23,9 +31,9 @@ passport.deserializeUser((id, done) => {
  * Facebook
  */
 passport.use(new FacebookStrategy({
-  clientID: configAuth.facebookAuth.clientID,
-  clientSecret: configAuth.facebookAuth.clientSecret,
-  callbackURL: configAuth.facebookAuth.callbackURL,
+  clientID: AUTH.facebookAuth.clientID,
+  clientSecret: AUTH.facebookAuth.clientSecret,
+  callbackURL: AUTH.facebookAuth.callbackURL,
   profileFields: [
     'id',
     'email',

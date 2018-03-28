@@ -5,8 +5,16 @@
  */
 const passport = require('passport')
 const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy
-const configAuth = require('../app/auth')
 const mongoose = require('mongoose')
+
+/**
+ * Variables
+ */
+const AUTH = require('../app/auth')
+
+/**
+ * Models
+ */
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -23,9 +31,9 @@ passport.deserializeUser((id, done) => {
  * LinkedIn
  */
 passport.use(new LinkedInStrategy({
-  clientID: configAuth.linkedinAuth.clientID,
-  clientSecret: configAuth.linkedinAuth.clientSecret,
-  callbackURL: configAuth.linkedinAuth.callbackURL,
+  clientID: AUTH.linkedinAuth.clientID,
+  clientSecret: AUTH.linkedinAuth.clientSecret,
+  callbackURL: AUTH.linkedinAuth.callbackURL,
   scope: [
     'r_emailaddress',
     'r_basicprofile'

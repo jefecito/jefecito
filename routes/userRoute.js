@@ -1,9 +1,12 @@
 /* jshint esversion: 6 */
 
-module.exports = application => {
-  const userController = require('../controllers/userController')
-  const mw = require('../middlewares/app')
+/*
+ * Requires
+ */
+const userController = require('../controllers/userController')
+const mw = require('../middlewares/app')
 
+module.exports = application => {
   /*
    * Acciones de usuario.
    * GET: Trae todos los usuarios o especifico segun ID

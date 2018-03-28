@@ -1,10 +1,14 @@
 /* jshint esversion: 6 */
 
 /**
- * Requires
+ * Modules
  */
 const mongoose = require('mongoose')
 const colors = require('colors')
+
+/**
+ * Variables
+ */
 const CONFIG = require('../app/config')
 
 /**

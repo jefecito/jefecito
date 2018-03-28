@@ -147,7 +147,6 @@ app.use(passport.session())
 /**
  * Routes
  */
-const index = require('./routes/index')
 const login = require('./routes/login')
 const user = require('./routes/user')
 const api = require('./routes/api')
@@ -155,7 +154,6 @@ const api = require('./routes/api')
 /**
  * Routes usage
  */
-app.use('/', index)
 app.use('/', login)
 app.use('/', user)
 app.use('/', api)

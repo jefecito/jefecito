@@ -1,12 +1,20 @@
 /* jshint esversion: 6 */
 
 /**
- * Requires
+ * Modules
  */
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
-const configAuth = require('../app/auth')
 const mongoose = require('mongoose')
+
+/**
+ * Variables
+ */
+const AUTH = require('../app/auth')
+
+/**
+ * Models
+ */
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -23,9 +31,9 @@ passport.deserializeUser((id, done) => {
  * Google
  */
 passport.use(new GoogleStrategy({
-  clientID: configAuth.googleAuth.clientID,
-  clientSecret: configAuth.googleAuth.clientSecret,
-  callbackURL: configAuth.googleAuth.callbackURL,
+  clientID: AUTH.googleAuth.clientID,
+  clientSecret: AUTH.googleAuth.clientSecret,
+  callbackURL: AUTH.googleAuth.callbackURL,
   scope: [
     'profile',
     'email'

@@ -4,8 +4,12 @@
  * Requires
  */
 const mongoose = require('mongoose')
-const User = mongoose.model('User')
 const validator = require('validator')
+
+/**
+ * Models
+ */
+const User = mongoose.model('User')
 
 /**
  * Trae todos los usuarios o específico según ID
