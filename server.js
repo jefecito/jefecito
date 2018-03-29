@@ -118,9 +118,12 @@ require('./config/passport/index')()
 /**
  * View engine setup
  */
-app.use(bodyParser.json())
+app.use(bodyParser.json({
+  limit: '50mb'
+}))
 app.use(bodyParser.urlencoded({
-  extended: false
+  limit: '50mb',
+  extended: true
 }))
 app.use(cookieParser(APP.name))
 

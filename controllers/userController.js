@@ -5,6 +5,8 @@
  */
 const mongoose = require('mongoose')
 const validator = require('validator')
+const mkdirp = require('mkdirp')
+const multer = require('multer')
 
 /**
  * Models
@@ -212,3 +214,138 @@ exports.toggleAdminPriviliges = (req, res, next) => {
     })
   }
 }
+
+/**
+ * Acciones usuario registrado
+ * 
+ * Traer información mi usuario
+ */
+exports.currentUserInfo = (req, res, next) => {
+  if (!req.user) {
+    return res.failure(-1, 'Acceso denegado', 200)
+  }
+
+  User.findById(req.user.id, (err, user) => {
+    if (err) {
+      return res.failure(-1, err, 200)
+    } else {
+      return res.success(user, 200)
+    }
+  })
+}
+
+/**
+ * Actualiza el nombre de usuario, e email.
+ */
+exports.updateCurrentUserInfo = (req, res, next) => {
+  if (!req.user) {
+    return res.failure(-1, 'Acceso denegado', 200)
+  }
+
+  const B = req.body
+  const username = validator.escape(B.username) || ''
+
+  if(validator.isEmail(B.email)) {
+    let FILTER = {
+      _id: {
+        $ne: req.user._id
+      },
+      $or: [{
+        'local.username': username
+      }, {
+        'local.email': B.email
+      }]
+    }
+    User.findOne(FILTER, (err, user) => {
+      if (err) {
+        return res.failure(-1, err, 200)
+      } else if(user && user.local.username === username) {
+        return res.failure(-1, 'El nombre de usuario ya esta en uso', 200)
+      } else if(user && user.local.email === B.email) {
+        return res.failure(-1, 'El correo electrónico ya se encuentra registrado', 200)
+      } else {
+        FILTER = {
+          _id: req.user._id
+        }
+
+        UPDATE = {
+          $set: {
+            'local.username': username,
+            'local.email': B.email
+          }
+        }
+
+        EXTRA = {
+          new: true,
+          safe: true
+        }
+
+        User.findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, userUpdated) => {
+          if (err) {
+            return res.failure(-1, err, 200)
+          } else {
+            return res.success(userUpdated, 200)
+          }
+        })
+      }
+    })
+  }
+}
+
+/**
+ * Actualiza el avatar
+ */
+exports.changeAvatar = (req, res, next) => {
+  const USER = req.user
+  const imageName = `avatar_${Date.now()}`
+
+  mkdirp(`public/uploads/${USER.id}/avatar/`, err => {
+    const storage = multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, `public/uploads/${USER.id}/avatar/`)
+      },
+      filename: (req, file, cb) => {
+        cb(null, imageName)
+      }
+    })
+
+    const uploadAvatar = multer({
+      storage: storage,
+      limits: {
+        fileSize: 10000000,
+        files: 1
+      }
+    }).single('avatar')
+
+    uploadAvatar(req, res, err => {
+      if (err) {
+        return res.failure(err, 200)
+      } else {
+        const path = `/uploads/${USER.id}/avatar/${imageName}`
+
+        const FILTER = {
+          _id: USER._id
+        }
+
+        const UPDATE = {
+          $set: {
+            'local.avatar': path
+          }
+        }
+
+        const EXTRA = {
+          new: true,
+          upsert: true
+        }
+
+        User
+          .findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, userUpdated) => {
+            if (err) {
+              return res.failure(err, 200)
+            } else {
+              return res.success(userUpdated, 200)
+            }
+          })
+      }
+    })
+  })}

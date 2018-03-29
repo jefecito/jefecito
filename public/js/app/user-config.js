@@ -30,7 +30,7 @@ var updateAvatar = function() {
   try {
     $.ajax({
       type: 'POST',
-      url: '/profile/avatar/upload',
+      url: '/api/user/me/avatar',
       enctype: 'multipart/form-data',
       data: fd,
       cache: false,
@@ -68,8 +68,8 @@ $("#updateAvatarInput").on("change", function(event) {
 var getAvatar = function() {
   try {
     $.ajax({
-      type: 'POST',
-      url: '/user',
+      type: 'GET',
+      url: '/api/user/me',
       success: function(res) {
         if(res.success) {
           d = new Date();

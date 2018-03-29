@@ -30,4 +30,23 @@ module.exports = application => {
   application
     .route('/api/user/upgrade')
     .put(mw.rateLimiter, mw.isAdmin, userController.toggleAdminPriviliges)
+
+  /**
+   * Acciones usuario registrado
+   */
+  application
+    .route('/api/user/me')
+    .get(mw.requireLogin, userController.currentUserInfo)
+    .put(mw.rateLimiter, mw.requireLogin, userController.updateCurrentUserInfo)
+
+  //application
+    //.route('/api/user/me/change-password')
+    //.put(mw.rateLimit, mw.requireLogin, userController.changePassword)
+  
+  /**
+   * Actualizo mi avatar
+   */
+  application
+    .route('/api/user/me/avatar')
+    .post(mw.rateLimiter, mw.requireLogin, userController.changeAvatar)
 }

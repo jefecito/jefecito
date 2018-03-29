@@ -26,49 +26,6 @@ const utils     = require('../lib/utils')
 // API USUARIOS
 // ==============================================
 // ==============================================
-  // Cambia el avatar
-  // ==============================================
-  router.post('/profile/avatar/upload', mw.requireLogin, (req, res) => {
-    var clean_path = 'uploads/' + req.user._id + '/avatar/';
-
-    mkdirp('public/uploads/' + req.user._id + '/avatar/', (err) => { 
-      var storage = multer.diskStorage({
-        destination: (req, file, cb) => {
-          cb(null, 'public/uploads/' + req.user._id +'/avatar');
-        }, // destination
-        filename: (req, file, cb) => {
-          cb(null, 'avatar');
-        } // filename
-      }); // multer.diskStorage()
-
-      var uploadAvatar = multer({
-        storage: storage,
-        limits: {
-          fileSize: 10000000, files:1
-        }
-      }).single('avatar');
-      
-      uploadAvatar(req, res, (err) => {
-        if(err) {
-          return res.json({success: false, data: err});
-        } else {
-          var total_path = '/' + clean_path + req.file.filename;
-
-          User.update({_id: req.user._id}, {$set: {'local.avatar': total_path}}, {upsert: true}, (err, data) => {
-            if(err) {
-              res.json({success: false, data: err});
-            } else {
-              req.user.local.avatar = total_path;
-              req.session.save((err) => {
-                res.json({success: true, data: {data: data, path: total_path}});
-              }); // req.session.save()
-            } // if/else
-          }); // User.update()
-        } // if/else
-      }); // uploadAvatar()
-    }); // mkdirp()
-  }); // POST /profile/avatar/upload
-
   // Subir un documento
   // ==============================================
   router.post('/document/upload', mw.isAdmin, (req, res) => {
@@ -172,22 +129,6 @@ const utils     = require('../lib/utils')
           res.success(user.local.uploadedDocuments, 200);
       }); // exec()
   }); // GET /userDocuments
-
-  // Traer Información del User
-  // ==============================================
-  router.post('/user', mw.requireLogin, (req, res, next) => {
-    User
-      .findById({_id: req.user._id})
-      .exec((err, user) => {
-        return (err) ?
-          res.failure(-1, err, 200) :
-          res.success(user, 200);
-      }); // exec()
-  }); // POST /user
-
-
-
-
 
 // USUARIOS RENDER VISTAS
 // ==============================================

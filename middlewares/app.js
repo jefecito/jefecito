@@ -20,7 +20,7 @@ module.exports = {
     if (!req.isAuthenticated()) {
       if (req.method == 'GET') {
         return res.redirect('/login')
-      } else if (req.method == 'POST') {
+      } else {
         return res.failure(-1, 'Unauthorized request', 403)
       }
     } else {

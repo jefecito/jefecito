@@ -28,8 +28,8 @@ switch(currentLocation) {
 var getUserSidebar = function() {
   try {
     $.ajax({
-      type: 'POST',
-      url: '/user',
+      type: 'GET',
+      url: '/api/user/me',
       success: function(res) {
         if(res.success) {
           d = new Date();
