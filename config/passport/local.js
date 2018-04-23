@@ -3,7 +3,6 @@
 /**
  * Modules
  */
-const bcrypt = require('bcrypt')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const validator = require('validator')
@@ -40,7 +39,7 @@ passport.use('local-login', new LocalStrategy((username, password, done) => {
         })
       } else if (!user.validPassword(password, user.local.password)) {
         return done(null, false, {
-          error: 'Usuario o contraseñ incorrecta'
+          error: 'Usuario o contraseña incorrecta'
         })
       } else {
         return done(null, user)

@@ -6,11 +6,17 @@
 const passport = require('passport')
 const validator = require('validator')
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 
 /**
  * Models
  */
 const User = mongoose.model('User')
+
+/**
+ * APP cfg
+ */
+const APP = require('../config/app/main')
 
 /**
  * Inicio de Sesión Local
@@ -28,11 +34,10 @@ exports.logInLocal = (req, res, next) => {
     req.logIn(user, (err) => {
       if (err) {
         return next(err);
-      }
-  
-      return (req.user.local.roles.indexOf('admin') == -1) ?
-        res.success({redirect: 'user', user: user}, 200) :
-        res.success({redirect: 'dashboard', user: user}, 200)
+      } else {
+        const payload = generatePayload(user)
+        return res.success(payload)
+      } // if/else
     })
   })(req, res, next)
 }
@@ -131,12 +136,9 @@ exports.logInTwitter = (req, res, next) => {
       if (err) {
         return next(err)
       } else {
-        if (user.local.roles.indexOf('admin') == -1) {
-          res.redirect('/usuario/perfil/'+req.user._id)
-        } else {
-          res.redirect('/dashboard')
-        }
-      }
+        const payload = generatePayload(user)
+        return res.success(payload)
+      } // if/else
     })
   })(req, res, next)
 }
@@ -158,12 +160,9 @@ exports.logInFacebook = (req, res, next) => {
       if (err) {
         return next(err)
       } else {
-        if (user.local.roles.indexOf('admin') == -1) {
-          res.redirect('/usuario/perfil/'+req.user._id)
-        } else {
-          res.redirect('/admin/panel')
-        }
-      }
+        const payload = generatePayload(user)
+        return res.success(payload)
+      } // if/else
     })
   })(req, res, next)
 }
@@ -185,12 +184,9 @@ exports.logInLinkedIn = (req, res, next) => {
       if (err) {
         return next(err)
       } else {
-        if (user.local.roles.indexOf('admin') == -1) {
-          res.redirect('/usuario/perfil/'+req.user._id)
-        } else {
-          res.redirect('/admin/panel')
-        }
-      }
+        const payload = generatePayload(user)
+        return res.success(payload)
+      } // if/else
     })
   })(req, res, next)
 }
@@ -212,12 +208,9 @@ exports.logInGoogle = (req, res, next) => {
       if (err) {
         return next(err)
       } else {
-        if (user.local.roles.indexOf('admin') == -1) {
-          res.redirect('/usuario/perfil/'+req.user._id)
-        } else {
-          res.redirect('/admin/panel')
-        }
-      }
+        const payload = generatePayload(user)
+        return res.success(payload)
+      } // if/else
     })
   })(req, res, next)
 }
@@ -227,5 +220,35 @@ exports.logInGoogle = (req, res, next) => {
  */
 exports.logOut = (req, res, next) => {
   req.logout()
-  res.redirect('/') // when full api, remove this line
+  return res.success('Sesión cerrada', 200)
 }
+
+/**
+ * Funciones Auxiliares
+ * 
+ * Generar Payload
+ */
+function generatePayload (user) {
+  const tokenConfig = {
+    id: user._id,
+    email: user.local.email,
+    roles: user.local.roles
+  }
+  
+  const tokenExpires = {
+    expiresIn: '10h'
+  }
+
+  return {
+    id: user._id,
+    username: user.local.username,
+    email: user.local.email,
+    roles: user.local.roles,
+    avatar: user.local.avatar,
+    token: jwt.sign(
+      tokenConfig,
+      APP.jwtSecret,
+      tokenExpires
+    )
+  }
+} // generatePayload()

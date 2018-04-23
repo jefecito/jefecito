@@ -348,4 +348,5 @@ exports.changeAvatar = (req, res, next) => {
           })
       }
     })
-  })}
+  })
+}

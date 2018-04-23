@@ -12,16 +12,16 @@ module.exports = application => {
    */
   application
     .route('/api/users')
-    .get(mw.rateLimiter, mw.isAdmin, userController.getAllUsers)
-    .post(mw.rateLimiter, mw.isAdmin, userController.createUser)
-    .delete(mw.rateLimiter, mw.isAdmin, userController.removeUser)
+    .get(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.getAllUsers)
+    .post(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.createUser)
+    .delete(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.removeUser)
 
   /**
    * Actualiza email y nombre de usuario
    */
   application
     .route('/api/user/update')
-    .put(mw.requireLogin, userController.updateEmailUsername)
+    .put(mw.requireAuth, userController.updateEmailUsername)
 
   /**
    * Agrega/remueve privilegios de administrador
@@ -29,24 +29,24 @@ module.exports = application => {
    */
   application
     .route('/api/user/upgrade')
-    .put(mw.rateLimiter, mw.isAdmin, userController.toggleAdminPriviliges)
+    .put(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.toggleAdminPriviliges)
 
   /**
    * Acciones usuario registrado
    */
   application
     .route('/api/user/me')
-    .get(mw.requireLogin, userController.currentUserInfo)
-    .put(mw.rateLimiter, mw.requireLogin, userController.updateCurrentUserInfo)
+    .get(mw.requireAuth, userController.currentUserInfo)
+    .put(mw.rateLimiter, mw.requireAuth, userController.updateCurrentUserInfo)
 
   //application
     //.route('/api/user/me/change-password')
-    //.put(mw.rateLimit, mw.requireLogin, userController.changePassword)
+    //.put(mw.rateLimit, mw.requireAuth, userController.changePassword)
   
   /**
    * Actualizo mi avatar
    */
   application
     .route('/api/user/me/avatar')
-    .post(mw.rateLimiter, mw.requireLogin, userController.changeAvatar)
+    .post(mw.rateLimiter, mw.requireAuth, userController.changeAvatar)
 }
