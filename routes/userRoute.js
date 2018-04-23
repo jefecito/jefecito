@@ -57,7 +57,7 @@ module.exports = application => {
    */
   application
     .route('/api/user/me/change-password')
-    .put(mw.rateLimit, mw.requireAuth, userController.changePassword)
+    .put(mw.rateLimiter, mw.requireAuth, userController.changePassword)
   
   /**
    * Actualizo mi avatar

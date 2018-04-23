@@ -15,7 +15,7 @@ const appConfig = require('../config/app/config')
 // ==============================================
   // Traer Alertas User
   // ==============================================
-  router.get('/userAlerts', mw.requireLogin, (req, res) => {
+  router.get('/userAlerts', /*mw.requireAuth,*/ (req, res) => {
     User
       .findById({_id: req.user._id})
       .populate('local.alerts')
@@ -35,21 +35,21 @@ const appConfig = require('../config/app/config')
     });
   }); // GET /
 
-  router.get('/user', mw.requireLogin, (req, res) => {
+  router.get('/user', /*mw.requireAuth,*/ (req, res) => {
     res.render('user', {
       app: appConfig,
       user: req.user
     });
   }); // GET /user
 
-  router.get('/user/settings', mw.requireLogin, (req, res) => {
+  router.get('/user/settings', /*mw.requireAuth,*/ (req, res) => {
     res.render('user-settings', {
       app: appConfig,
       user: req.user
     });
   }); // GET /user/settings
 
-  router.get('/user/config', mw.requireLogin, (req, res) => {
+  router.get('/user/config', /*mw.requireAuth,*/ (req, res) => {
     res.render('user-config', {
       app: appConfig,
       user: req.user

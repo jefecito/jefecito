@@ -92,7 +92,7 @@ router.get('/forgot-password', mw.rateLimiter, (req, res) => {
  * Esta ruta valida que el usuario esté registrado y crea un token que guarda en
  * la base de datos.Si ya existe uno, llamar este comando lo renueva.
  */
-router.put("/access/token", mw.rateLimiter, mw.requireLogin, (req, res, next) => {
+router.put("/access/token", mw.rateLimiter, mw.requireAuth, (req, res, next) => {
 
   //req.user guarda el usuario logueado.
   let user = req.user;
