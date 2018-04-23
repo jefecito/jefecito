@@ -8,16 +8,12 @@ const passport      = require('passport')
 const router        = express.Router()
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
-const Upload = mongoose.model('Upload')
 const mw            = require('../middlewares/app')
-const multer        = require('multer')
 const validator     = require('validator')
-const fs            = require('fs')
 const bcrypt        = require('bcrypt')
 const randomstring  = require("randomstring")
 const path          = require('path')
 const appConfig     = require('../config/app/main')
-const nodemailer    = require('nodemailer')
 // var EmailTemplate = require('email-templates').EmailTemplate;
 // var resetEmail    = path.join(__dirname, '../templates', 'resetemail');
 // var emailTx       = new EmailTemplate(resetEmail);
@@ -28,36 +24,6 @@ const app           = require('../server')
 // API USUARIOS
 // ==============================================
 // ==============================================
-  // Usuario cambia contraseña manualmente
-  // ==============================================
-  router.put('/api/user/changepassword', mw.requireLogin, (req, res) => {
-    if(req.body.id === undefined)
-      return res.failure(-1, 'Parámetros Insuficientes', 200);
-    
-    var filter = { _id: req.body.id };
-    var password    = req.body.password || '';
-    var newPassword = req.body.newPassword || '';
-    
-    User.findById(filter, (err, user) => {
-      if(!user)
-        return res.failure(-1, 'Usuario no encontrado', 200);
-      else {
-        if(user.local.creationMethod == 'local' || user.local.creationMethod == 'superadmin') {
-          if(bcrypt.compareSync(password, user.local.password)) {
-            user.local.password = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(10), null);
-            user.save((err) => {
-              return (err) ?
-                res.failure(-1, err, 200) :
-                res.success('Contraseña cambiada', 200);
-            }); // user.save()
-          } else
-            return res.failure(-1, 'La contraseña anterior es incorrecta', 200);
-        } else
-          return res.failure(-1, 'Metodo de registración incorrecto', 200);
-      } // if/else
-    }); // User.findById()
-  }); // PUT /api/user/changepassword
-
   // Usuario consulta para nuevo token para recibir nueva contraseña
   // ==============================================
   router.post('/api/user/token', mw.rateLimiter, (req, res) => {
@@ -163,25 +129,4 @@ const app           = require('../server')
       return res.failure(-1, "Password inválido", 200);
   }); // POST /user/reset/:token
 
-
-// API ADMINISTRADORES
-// ==============================================
-// ==============================================
-  // Trae todos los usuarios registrados
-  // ==============================================
-  router.get('/api/admins', mw.isAdmin, (req, res) => {
-    var filter = {
-      'local.roles': {
-        $in: ['admin']
-      }
-    };
-
-    User.find(filter, (err, data) => {
-      return (err) ?
-        res.failure(-1, err, 200) :
-        res.success(data, 200);
-    }); // User.find()
-  }); // GET /api/admins
-
-
-  module.exports = router;
+module.exports = router;

@@ -82,10 +82,4 @@ const appConfig = require('../config/app/config')
     });
   }); // GET /dashboard/documents
 
-  router.get('/dashboard/crud', mw.isAdmin, (req, res) => {
-    res.render('generator-crud', {
-      app: appConfig
-    });
-  }); // GET /dashboard/crud
-
 module.exports = router;

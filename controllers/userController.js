@@ -14,6 +14,8 @@ const multer = require('multer')
 const User = mongoose.model('User')
 
 /**
+ * Admin APIs
+ * 
  * Trae todos los usuarios o específico según ID
  */
 exports.getAllUsers = (req, res, next) => {
@@ -110,6 +112,65 @@ exports.removeUser = (req, res, next) => {
 }
 
 /**
+ * Trae todos los administradores
+ */
+exports.getAllAdmins = (req, res, next) => {
+  const FILTER = {
+    'local.roles': {
+      $in: ['admin']
+    }
+  }
+
+  User
+    .find(FILTER, (err, admins) => {
+      if (err) {
+        return res.failure(-1, err, 200)
+      } else {
+        return res.success(admins, 200)
+      }
+    })
+}
+
+/**
+ * Agrega o remueve los privilegios de administrador
+ * de un usuario específico (id)
+ */
+exports.toggleAdminPriviliges = (req, res, next) => {
+  const B = req.body
+
+  if (!B.id) {
+    return res.failure(-1, 'Parámetros Insuficientes', 200)
+  } else {
+    const role = B.toAdmin ? ['admin'] : ['user']
+
+    const FILTER = {
+      _id: B.id
+    }
+
+    const UPDATE = {
+      $set: {
+        'local.roles': role
+      }
+    }
+
+    const EXTRA = {
+      new: true,
+      safe: true
+    }
+
+    User.findOneAndUpdate(FILTER, UPDATE, EXTRAS, (err, userUpdated) => {
+      if (err) {
+        return res.failure(-1, err, 200)
+      } else {
+        return res.success(userUpdated, 200)
+      }
+    })
+  }
+}
+
+/**
+ * User APIs
+ * 
  * Actualiza email y nombre de usuario de un usuario
  */
 exports.updateEmailUsername = (req, res, next) => {
@@ -177,45 +238,6 @@ exports.updateEmailUsername = (req, res, next) => {
 }
 
 /**
- * Agrega o remueve los privilegios de administrador
- * de un usuario específico (id)
- */
-exports.toggleAdminPriviliges = (req, res, next) => {
-  const B = req.body
-
-  if (!B.id) {
-    return res.failure(-1, 'Parámetros Insuficientes', 200)
-  } else {
-    const role = B.toAdmin ?
-      ['admin'] :
-      ['user']
-
-    const FILTER = {
-      _id: B.id
-    }
-
-    const UPDATE = {
-      $set: {
-        'local.roles': role
-      }
-    }
-
-    const EXTRA = {
-      new: true,
-      safe: true
-    }
-
-    User.findOneAndUpdate(FILTER, UPDATE, EXTRAS, (err, userUpdated) => {
-      if (err) {
-        return res.failure(-1, err, 200)
-      } else {
-        return res.success(userUpdated, 200)
-      }
-    })
-  }
-}
-
-/**
  * Acciones usuario registrado
  * 
  * Traer información mi usuario
@@ -245,7 +267,9 @@ exports.updateCurrentUserInfo = (req, res, next) => {
   const B = req.body
   const username = validator.escape(B.username) || ''
 
-  if(validator.isEmail(B.email)) {
+  if(!validator.isEmail(B.email)) {
+    return res.failure(-1, 'Email inválido', 200)
+  } else {
     let FILTER = {
       _id: {
         $ne: req.user._id
@@ -256,40 +280,43 @@ exports.updateCurrentUserInfo = (req, res, next) => {
         'local.email': B.email
       }]
     }
-    User.findOne(FILTER, (err, user) => {
-      if (err) {
-        return res.failure(-1, err, 200)
-      } else if(user && user.local.username === username) {
-        return res.failure(-1, 'El nombre de usuario ya esta en uso', 200)
-      } else if(user && user.local.email === B.email) {
-        return res.failure(-1, 'El correo electrónico ya se encuentra registrado', 200)
-      } else {
-        FILTER = {
-          _id: req.user._id
-        }
 
-        UPDATE = {
-          $set: {
-            'local.username': username,
-            'local.email': B.email
+    User
+      .findOne(FILTER, (err, user) => {
+        if (err) {
+          return res.failure(-1, err, 200)
+        } else if(user && user.local.username === username) {
+          return res.failure(-1, 'El nombre de usuario ya esta en uso', 200)
+        } else if(user && user.local.email === B.email) {
+          return res.failure(-1, 'El correo electrónico ya se encuentra registrado', 200)
+        } else {
+          FILTER = {
+            _id: req.user._id
           }
-        }
 
-        EXTRA = {
-          new: true,
-          safe: true
-        }
-
-        User.findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, userUpdated) => {
-          if (err) {
-            return res.failure(-1, err, 200)
-          } else {
-            return res.success(userUpdated, 200)
+          UPDATE = {
+            $set: {
+              'local.username': username,
+              'local.email': B.email
+            }
           }
-        })
-      }
-    })
-  }
+
+          EXTRA = {
+            new: true,
+            safe: true
+          }
+
+          User
+            .findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, userUpdated) => {
+              if (err) {
+                return res.failure(-1, err, 200)
+              } else {
+                return res.success(userUpdated, 200)
+              }
+            })
+        } // if/else
+      }) // User.findOne
+  } // if/else
 }
 
 /**
@@ -300,7 +327,7 @@ exports.changeAvatar = (req, res, next) => {
   const imageName = `avatar_${Date.now()}`
 
   mkdirp(`public/uploads/${USER.id}/avatar/`, err => {
-    const storage = multer.diskStorage({
+    const storageConfig = multer.diskStorage({
       destination: (req, file, cb) => {
         cb(null, `public/uploads/${USER.id}/avatar/`)
       },
@@ -309,17 +336,19 @@ exports.changeAvatar = (req, res, next) => {
       }
     })
 
-    const uploadAvatar = multer({
-      storage: storage,
+    const multerConfig = {
+      storage: storageConfig,
       limits: {
         fileSize: 10000000,
         files: 1
       }
-    }).single('avatar')
+    }
+
+    const uploadAvatar = multer(multerConfig).single('avatar')
 
     uploadAvatar(req, res, err => {
       if (err) {
-        return res.failure(err, 200)
+        return res.failure(-1, err, 200)
       } else {
         const path = `/uploads/${USER.id}/avatar/${imageName}`
 
@@ -341,12 +370,71 @@ exports.changeAvatar = (req, res, next) => {
         User
           .findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, userUpdated) => {
             if (err) {
-              return res.failure(err, 200)
+              return res.failure(-2, err, 200)
             } else {
               return res.success(userUpdated, 200)
             }
-          })
-      }
-    })
-  })
+          }) // User.findOneAndUpdate()
+      } // if/else
+    }) // uploadAvatar
+  }) // mkdirp()
+}
+
+/**
+ * Usuario actualiza contraseña manualmente
+ */
+exports.changePassword = (req, res, next) => {
+  const B = req.body
+
+  if (!B.id) {
+    return res.failure(-1, 'Usuario no identificado', 200)
+  }
+
+  const FILTER = {
+    _id: req.body.id
+  }
+
+  const password = B.password || ''
+  const newPassword = B.newPassword || ''
+
+  User
+    .findById(FILTER, (err, user) => {
+      if (!user) {
+        return res.failure(-1, 'Usuario no encontrado', 200)
+      } else {
+        const isCreationMethodValid = checkCreationMethod(user.local.creationMethod)
+
+        if (!isCreationMethodValid) {
+          return res.failure(-2, 'Metodo de registración no válido', 200)
+        } else {
+          if (!user.validPassword(password)) {
+            return res.failure(-3, 'Ha ingresado una contraseña actual incorrecta', 200)
+          } else {
+            user.local.password = user.generateHash(newPassword)
+
+            user
+              .save((err) => {
+                if (err) {
+                  return res.failure(-4, err, 200)
+                } else {
+                  return res.success('Contraseña actualizada', 200)
+                }
+              })
+          } // if/else
+        } // if/else
+      } // if/else
+    }) // User.findById()
+}
+
+/**
+ * Funciones auxiliares
+ * 
+ * Chequea el método de registración
+ */
+function checkCreationMethod(method) {
+  if (method == 'local' || method == 'superadmin') {
+    return true
+  }
+
+  return false
 }
