@@ -11,8 +11,8 @@ const mongoose = require('mongoose')
 const uploadSchema = new mongoose.Schema({
   uploadedAt: Date,
   uploadedBy: {
-    id: String,
-    username: String
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   uploadName: String,
   uploadSize: Number,
