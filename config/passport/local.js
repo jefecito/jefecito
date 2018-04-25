@@ -30,21 +30,22 @@ passport.use('local-login', new LocalStrategy((username, password, done) => {
       'local.email': username
     }
 
-    User.findOne(FILTER, (err, user) => {
-      if (err) {
-        return done(err)
-      } else if (!user) {
-        return done(null, false, {
-          error: 'error en usuario/contraseña'
-        })
-      } else if (!user.validPassword(password, user.local.password)) {
-        return done(null, false, {
-          error: 'Usuario o contraseña incorrecta'
-        })
-      } else {
-        return done(null, user)
-      }
-    })
+    User
+      .findOne(FILTER, (err, user) => {
+        if (err) {
+          return done(err)
+        } else if (!user) {
+          return done(null, false, {
+            error: 'error en usuario/contraseña'
+          })
+        } else if (!user.validPassword(password, user.local.password)) {
+          return done(null, false, {
+            error: 'Usuario o contraseña incorrecta'
+          })
+        } else {
+          return done(null, user)
+        }
+      })
   } else {
     return done(null, false, {
       error: 'error en usuario/Contraseña'

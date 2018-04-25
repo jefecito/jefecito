@@ -1,5 +1,6 @@
 {
   "appName": "jefecito",
   "appURL": "jefecito.io",
+  "port": 3000,
   "configured": true
 }

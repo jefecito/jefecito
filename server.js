@@ -214,10 +214,13 @@ app.use((err, req, res, next) => {
 })
 
 /**
+ * Set PORT
+ */
+app.set('port', process.env.PORT || APP.port)
+
+/**
  * Firing Up express
  */
-app.set('port', process.env.PORT || 3000)
-
 const server = http.createServer(app).listen(app.get('port'), '127.0.0.1', () => {
   console.log(`${APP.name} server listening on port ${app.get('port')}`)
 })

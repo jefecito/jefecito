@@ -10,7 +10,9 @@ module.exports = application => {
   /**
    * Admin APIs:
    * 
-   * CRD de usuario
+   * GET: Listado de Usuarios
+   * POST: Creación de Usuarios
+   * DELETE: Eliminación de Usuarios
    */
   application
     .route('/api/users')
@@ -19,45 +21,24 @@ module.exports = application => {
     .delete(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.removeUser)
 
   /**
-   * Agrega/remueve privilegios de administrador
-   * Posible extención a multiples roles
-   */
-  application
-    .route('/api/user/upgrade')
-    .put(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.toggleAdminPriviliges)
-
-  /**
-   * Trae todos los administradores
+   * GET: Listado de administradores
+   * PUT: Agrega/remueve privilegios de administrador
    */
   application
     .route('/api/admins')
     .get(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.getAllAdmins)
+    .put(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.toggleAdminPriviliges)
 
   /**
    * User APIs:
    * 
-   * Actualiza email y nombre de usuario
-   */
-  application
-    .route('/api/user/update')
-    .put(mw.rateLimiter, mw.requireAuth, userController.updateEmailUsername)
-
-  /**
    * GET: Trae información del usuario
    * PUT: Actualiza nombre de usuario y correo electronico
-   * 
    */
   application
     .route('/api/user/me')
-    .get(mw.requireAuth, userController.currentUserInfo)
+    .get(mw.rateLimiter, mw.requireAuth, userController.currentUserInfo)
     .put(mw.rateLimiter, mw.requireAuth, userController.updateCurrentUserInfo)
-
-  /**
-   * Cambiar contraseña
-   */
-  application
-    .route('/api/user/me/change-password')
-    .put(mw.rateLimiter, mw.requireAuth, userController.changePassword)
   
   /**
    * Actualizo mi avatar
@@ -65,4 +46,20 @@ module.exports = application => {
   application
     .route('/api/user/me/avatar')
     .post(mw.rateLimiter, mw.requireAuth, userController.changeAvatar)
+
+  /**
+   * API Contraseñas:
+   * 
+   * Usuario cambia contraseña
+   */
+  application
+    .route('/api/user/me/change-password')
+    .put(mw.rateLimiter, mw.requireAuth, userController.changePassword)
+
+  /**
+   * Usuario olvida contraseña
+   */
+  application
+    .route('/api/user/me/request-password')
+    .put(mw.rateLimiter, userController.requestPassword)
 }

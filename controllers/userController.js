@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const mkdirp = require('mkdirp')
 const multer = require('multer')
+const randomstring = require("randomstring")
 
 /**
  * Models
@@ -14,7 +15,7 @@ const multer = require('multer')
 const User = mongoose.model('User')
 
 /**
- * Admin APIs
+ * Admin APIs:
  * 
  * Trae todos los usuarios o específico según ID
  */
@@ -169,76 +170,7 @@ exports.toggleAdminPriviliges = (req, res, next) => {
 }
 
 /**
- * User APIs
- * 
- * Actualiza email y nombre de usuario de un usuario
- */
-exports.updateEmailUsername = (req, res, next) => {
-  const B = req.body
-
-  if (!B.id) {
-    return res.failure(-1, 'Parámetros Insuficientes', 200)
-  }
-
-  // Preparo el Filtro
-  const FILTER = {
-    _id: B.id
-  }
-
-  // Valido el email y usuario
-  const username = validator.escape(B.username);
-  const email = validator.escape(B.email);
-
-  // Chequeo que el email sea válido
-  const isValidEmail = validator.isEmail(email)
-
-  /**
-   * Chequear que sea el mismo usuario (session|token)
-   * 
-   * if(req.user._id !== B.id) {
-   *   return res.failure(-1, 'Solo puede actualizar su usuario', 200)
-   * }
-   */
-
-  if (!isValidEmail) {
-    return res.failure(-1, 'El correo electrónico ingresado no es válido', 200)
-  } else {
-    const UPDATE = {
-      $set: {
-        'local.username': username,
-        'local.email': email
-      }
-    }
-
-    const EXTRA = {
-      new: true,
-      safe: true
-    }
-
-    User
-      .findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, userUpdated) => {
-        if (err) {
-          return res.failure(-1, err, 200)
-        } else {
-          /**
-           * Ver que hacer con la sessión
-           * 
-           * req.user.local.username = username;
-           * req.user.local.email    = email;
-           * req.session.save((err) => {
-           *   return (err) ?
-           *     res.failure(-1, err, 200) :
-           *     res.success(saved, 200);
-           *   }); // req.session.save()
-           */
-          return res.success(userUpdated, 200)
-        } // if/else
-      })
-  } // if/else
-}
-
-/**
- * Acciones usuario registrado
+ * User APIs:
  * 
  * Traer información mi usuario
  */
@@ -424,6 +356,73 @@ exports.changePassword = (req, res, next) => {
         } // if/else
       } // if/else
     }) // User.findById()
+}
+
+/**
+ * Usuario olvida contraseña
+ */
+exports.requestPassword = (req, res, next) => {
+  const B = req.body
+  const email = B.email
+
+  if (!validator.isEmail(email)) {
+    return res.failure(-1, 'Ingrese un email válido', 200)
+  } else {
+    const FILTER = {
+      'local.email': email
+    }
+
+    User
+      .findOne(FILTER, (err, user) => {
+        if (!user) {
+          console.log('No se envia correo, no existe usuario creado con el correo ingresado')
+          return res.success('En breve recibirá un correo con un link a la dirección indicada', 200)
+        } else {
+          if (user.local.creationMethod != 'local') {
+            console.log('No se envia correo, usuario registrado con redes sociales')
+            return res.success('En breve recibirá un correo con un link a la dirección indicada', 200)
+          } else {
+            user.local.resetToken        = randomstring.generate(50)
+            user.local.resetTokenExpires = Date.now() + 3600000 // 1 hora
+
+            user
+              .save((err) => {
+                if (err) {
+                  return res.failure(-1, err, 200)
+                } else {
+                  var info = {
+                    app: appConfig,
+                    user: user.local.username,
+                    email: email,
+                    token: user.local.resetToken
+                  }; // info
+
+                  emailTx.render(info, (err, result) => {
+                    if(err) {
+                      console.log(err);
+                    } else {
+                      var mailOptions = {
+                        from: 'no-reply@debugthebox.com', 
+                        to: [email, 'maxi.canellas@gmail.com', 'nestor.2005@gmail.com'],
+                        subject: 'Resetear contraseña',
+                        html: result.html
+                      }; // mailOptions
+
+                      transporter.sendMail(mailOptions, (error, info) => {
+                        if (error)
+                          console.log(error, info);
+                        else
+                          console.log('Message sent: ' + info.response);
+                      }); // transporter.sendMail()
+                    } // if/else
+                  }); // emailTx.render()
+                  return res.success('En breve recibirá un correo con un link a la dirección indicada', 200);
+                } // if/else
+              })
+          } // if/else
+        } // if/else
+      }) // User.find()
+  }
 }
 
 /**

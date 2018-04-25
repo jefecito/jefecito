@@ -244,7 +244,7 @@ function generatePayload (user) {
     username: user.local.username,
     email: user.local.email,
     roles: user.local.roles,
-    avatar: user.local.avatar,
+    avatar: `${APP.getENV().url}${user.local.avatar}`,
     token: jwt.sign(
       tokenConfig,
       APP.jwtSecret,

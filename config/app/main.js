@@ -9,7 +9,6 @@ const nodemailer = require('nodemailer')
 /**
  * Variables
  */
-const PORT = express().get('port')
 const CONFIG = require('./config')
 
 /**
@@ -18,9 +17,10 @@ const CONFIG = require('./config')
 module.exports = {
   name: CONFIG.appName,
   domain: CONFIG.appURL,
+  port: CONFIG.port,
   url: 'http://',
   dev: {
-    url: `http://localhost:${PORT}`
+    url: `http://localhost:${CONFIG.port}`
   },
   production: {
     url: 'http://'
