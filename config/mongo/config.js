@@ -52,7 +52,7 @@ User.findOne(FILTER, (err, user) => {
         }
       })
 
-      newUser.local.password = newUser.generateHash('cr4fty_p4ssw0rd')
+      newUser.local.password = newUser.generateHash('admin')
 
       newUser.save(err => {
         if (err) {
@@ -63,7 +63,7 @@ User.findOne(FILTER, (err, user) => {
           console.log('Admin user created')
           console.log('User: admin')
           console.log('Email: ', `admin@${CONFIG.appURL}`)
-          console.log('Password:', 'cr4fty_p4ssw0rd')
+          console.log('Password:', 'admin')
           console.log('======================')
           console.log('')
         }

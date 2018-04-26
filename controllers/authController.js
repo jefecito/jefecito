@@ -22,6 +22,7 @@ const APP = require('../config/app/main')
  * Inicio de Sesión Local
  */
 exports.logInLocal = (req, res, next) => {
+  console.log('req.body: ', req.body)
   passport.authenticate('local-login', (err, user, info) => {
     if (err) {
       return next(err)
@@ -32,6 +33,7 @@ exports.logInLocal = (req, res, next) => {
     }
   
     req.logIn(user, (err) => {
+      console.log('err: ', err)
       if (err) {
         return next(err);
       } else {

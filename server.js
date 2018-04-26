@@ -2,7 +2,6 @@
  * Variables
  */
 const cacheTime = 86400000 * 30
-const cookieTime = 1000 * 60 * 60 * 2
 
 /**
  * Modules
@@ -14,15 +13,13 @@ const express = require('express')
 const favicon = require('serve-favicon')
 const fs = require('fs')
 const http = require('http')
-const https = require('https')
+const path = require('path')
 const logger = require('morgan')
 const passport = require('passport')
-const session = require('express-session')
-const MongoStore = require('connect-mongo')(session)
-const path = require('path')
 const helmet = require('helmet')
 const swaggerUi = require('swaggerize-ui')
 const jsonfile = require('jsonfile')
+const cors = require('cors')
 
 /**
  * App configuration
@@ -42,9 +39,6 @@ if (!fs.existsSync('./logs')) {
  */
 const app = express()
 
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
-app.set('json spaces', 2)
 app.use(logger('dev'))
 
 app.use(express.static(path.join(__dirname, 'public'), {
@@ -74,25 +68,27 @@ process.on('uncaughtException', (err, req, res, next) => {
  */
 app.use(helmet())
 
+app.use(cors())
+
 /**
  * Response definition
  */
 app.use((req, res, next) => {
   res.success = (data, status) => {
-    return res.status(status ? status : 200).send({
+    return res.status(status || 200).send({
       success: true,
-      data: data ? data : '',
+      data: data || '',
       error: null
     })
   }
 
   res.failure = (errorCode, errorMsg, status) => {
-    return res.status(status ? status : 200).send({
+    return res.status(status || 200).send({
       success: false,
       data: null,
       error: {
-        code: errorCode ? errorCode : -1,
-        message: errorMsg ? errorMsg : 'Unknown Error'
+        code: errorCode || -1,
+        message: errorMsg || 'Error Interno'
       }
     })
   }
@@ -125,43 +121,27 @@ app.use(bodyParser.urlencoded({
   limit: '50mb',
   extended: true
 }))
-app.use(cookieParser(APP.name))
 
-app.use(session({
-  name: APP.name,
-  secret:'some_secret',
-  saveUninitialized: true,
-  resave: true,
-  cookie: {
-    maxAge: cookieTime
-  },
-  store: new MongoStore({
-    url: `mongodb://localhost/${APP.name}`,
-    host: 'localhost',
-    collection: 'sessions',
-    autoReconnect: true,
-    clear_interval: 3600
-  })
-}))
+app.use(cookieParser(APP.name))
 
 app.use(passport.initialize())
 app.use(passport.session())
 
 /**
  * Routes
- */
-const login = require('./routes/login')
-const user = require('./routes/user')
-const api = require('./routes/api')
+ const login = require('./routes/login')
+ const user = require('./routes/user')
+ const api = require('./routes/api')
+*/
 
 /**
  * Routes usage
- */
-app.use('/', login)
-app.use('/', user)
-app.use('/', api)
+ app.use('/', login)
+ app.use('/', user)
+ app.use('/', api)
+*/
 require('./routes/index')(app)
-
+/*
 app.use('/api-docs', (req, res) => {
   res.json(require('./docs/api.json'))
 })
@@ -170,7 +150,7 @@ app.use('/internal/docs', swaggerUi({
   validatorUrl: null,
   docs: '/api-docs'
 }))
-
+*/
 /**
  * Disable server banner header
  */
@@ -193,10 +173,12 @@ app.use((req, res, next) => {
  */
 if (process.env.NODE_ENV === 'development') {
   app.use((err, req, res, next) => {
-    res.status(err.status || 500)
-    res.render('error', {
-      message: err.message,
-      error: err
+    res.status(err.status || 500).send({
+      success: false,
+      error: {
+        code: -1,
+        message: err.message
+      }
     })
   })
 }
@@ -206,10 +188,12 @@ if (process.env.NODE_ENV === 'development') {
  * No stacktraces leaked to user
  */
 app.use((err, req, res, next) => {
-  res.status(err.status || 500)
-  res.render('error', {
-    message: err.message,
-    error: {}
+  res.status(err.status || 500).send({
+    success: false,
+    error: {
+      code: -1,
+      message: err.message
+    }
   })
 })
 
