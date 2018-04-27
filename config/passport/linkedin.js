@@ -11,6 +11,16 @@ const mongoose = require('mongoose')
  * Variables
  */
 const AUTH = require('../app/auth')
+const CONFIG = {
+  clientID: AUTH.linkedinAuth.clientID,
+  clientSecret: AUTH.linkedinAuth.clientSecret,
+  callbackURL: AUTH.linkedinAuth.callbackURL,
+  scope: [
+    'r_emailaddress',
+    'r_basicprofile'
+  ],
+  state: true
+}
 
 /**
  * Models
@@ -30,16 +40,7 @@ passport.deserializeUser((id, done) => {
 /**
  * LinkedIn
  */
-passport.use(new LinkedInStrategy({
-  clientID: AUTH.linkedinAuth.clientID,
-  clientSecret: AUTH.linkedinAuth.clientSecret,
-  callbackURL: AUTH.linkedinAuth.callbackURL,
-  scope: [
-    'r_emailaddress',
-    'r_basicprofile'
-  ],
-  state: true
-}, (accessToken, refreshToken, profile, done) => {
+passport.use(new LinkedInStrategy(CONFIG, (accessToken, refreshToken, profile, done) => {
   process.nextTick(() => {
     let FILTER = {
       'linkedin.id': profile.id

@@ -11,6 +11,11 @@ const mongoose = require('mongoose')
  * Variables
  */
 const AUTH = require('../app/auth')
+const CONFIG = {
+  consumerKey: AUTH.twitterAuth.consumerKey,
+  consumerSecret: AUTH.twitterAuth.consumerSecret,
+  callbackURL: AUTH.twitterAuth.callbackURL
+}
 
 /**
  * Models
@@ -30,11 +35,7 @@ passport.deserializeUser((id, done) => {
 /**
  * Twitter
  */
-passport.use(new TwitterStrategy({
-  consumerKey: AUTH.twitterAuth.consumerKey,
-  consumerSecret: AUTH.twitterAuth.consumerSecret,
-  callbackURL: AUTH.twitterAuth.callbackURL
-}, (token, tokenSecret, profile, done) => {
+passport.use(new TwitterStrategy(CONFIG, (token, tokenSecret, profile, done) => {
   process.nextTick(() => {
     let FILTER = {
       'twitter.id': profile.id

@@ -37,7 +37,7 @@ module.exports = application => {
    */
   application
     .route('/api/user/me')
-    .get(mw.rateLimiter, mw.requireAuth, userController.currentUserInfo)
+    .post(mw.rateLimiter, mw.requireAuth, userController.currentUserInfo)
     .put(mw.rateLimiter, mw.requireAuth, userController.updateCurrentUserInfo)
   
   /**

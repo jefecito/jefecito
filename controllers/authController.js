@@ -210,7 +210,10 @@ exports.logInGoogle = (req, res, next) => {
         return next(err)
       } else {
         const payload = generatePayload(user)
-        return res.success(payload)
+        res.writeHead(302, {
+          Location: 'http://localhost:8080/auth/callback?token='+payload.token
+        });
+        res.end();
       } // if/else
     })
   })(req, res, next)

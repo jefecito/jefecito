@@ -15,6 +15,11 @@ const randomstring = require("randomstring")
 const User = mongoose.model('User')
 
 /**
+ * APP cfg
+ */
+const APP = require('../config/app/main')
+
+/**
  * Admin APIs:
  * 
  * Trae todos los usuarios o específico según ID
@@ -175,17 +180,33 @@ exports.toggleAdminPriviliges = (req, res, next) => {
  * Traer información mi usuario
  */
 exports.currentUserInfo = (req, res, next) => {
+  const B = req.body
+
   if (!req.user) {
-    return res.failure(-1, 'Acceso denegado', 200)
+    return res.failure(-1, 'Usuario no identificado', 200)
   }
 
-  User.findById(req.user.id, (err, user) => {
-    if (err) {
-      return res.failure(-1, err, 200)
-    } else {
-      return res.success(user, 200)
-    }
-  })
+  User
+    .findOne({_id: req.user.id}, (err, user) => {
+      if (err) {
+        return res.failure(-1, err, 200)
+      } else {
+        const avatarUrl = (user.local.avatar[0] !== '/') ?
+          user.local.avatar :
+          `${APP.getENV().url}${user.local.avatar}`;
+
+        const response = {
+          id: user._id,
+          username: user.local.username,
+          email: user.local.email,
+          roles: user.local.roles,
+          avatar: avatarUrl,
+          token: B.token
+        }
+
+        return res.success(response, 200)
+      }
+    }) // User.findById
 }
 
 /**

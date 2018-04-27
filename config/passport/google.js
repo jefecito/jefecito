@@ -11,6 +11,15 @@ const mongoose = require('mongoose')
  * Variables
  */
 const AUTH = require('../app/auth')
+const CONFIG ={
+  clientID: AUTH.googleAuth.clientID,
+  clientSecret: AUTH.googleAuth.clientSecret,
+  callbackURL: AUTH.googleAuth.callbackURL,
+  scope: [
+    'profile',
+    'email'
+  ]
+}
 
 /**
  * Models
@@ -30,81 +39,75 @@ passport.deserializeUser((id, done) => {
 /**
  * Google
  */
-passport.use(new GoogleStrategy({
-  clientID: AUTH.googleAuth.clientID,
-  clientSecret: AUTH.googleAuth.clientSecret,
-  callbackURL: AUTH.googleAuth.callbackURL,
-  scope: [
-    'profile',
-    'email'
-  ]
-}, (token, refreshToken, profile, done) => {
+passport.use(new GoogleStrategy(CONFIG, (token, refreshToken, profile, done) => {
   process.nextTick(() => {
     let FILTER = {
       'google.id': profile.id
     }
 
-    User.findOne(FILTER, (err, user) => {
-      if (err) {
-        return done(err)
-      }
-
-      if (user) {
-        return done(null, user)
-      } else {
-        FILTER = {
-          'local.email': profile.emails[0].value
+    User
+      .findOne(FILTER, (err, user) => {
+        if (err) {
+          return done(err)
         }
 
-        User.findOne(FILTER, (err, user) => {
-          if (err) {
-            return res.failure(-1, 'Error social', 200)
-          } else if(!user) {
-            // Usuario local no existe
-            const newUser = new User({
-              google: {
-                id: profile.id,
-                token: token,
-                name: profile.displayName,
-                email: profile.emails[0].value
-              },
-              local: {
-                createdAt: Date.now(),
-                roles: ['user'],
-                username: profile.displayName,
-                email: profile.emails[0].value,
-                avatar: profile.photos[0].value,
-                creationMethod: 'go',
-                isConfirmed: true
-              }
-            })
+        if (user) {
+          return done(null, user)
+        } else {
+          FILTER = {
+            'local.email': profile.emails[0].value
+          }
 
-            newUser.save(err => {
+          User
+            .findOne(FILTER, (err, user) => {
               if (err) {
-                throw err
-              }
+                return res.failure(-1, 'Error social', 200)
+              } else if(!user) {
+                // Usuario local no existe
+                const newUser = new User({
+                  google: {
+                    id: profile.id,
+                    token: token,
+                    name: profile.displayName,
+                    email: profile.emails[0].value
+                  },
+                  local: {
+                    createdAt: Date.now(),
+                    roles: ['user'],
+                    username: profile.displayName,
+                    email: profile.emails[0].value,
+                    avatar: profile.photos[0].value,
+                    creationMethod: 'go',
+                    isConfirmed: true
+                  }
+                })
 
-              return done(null, newUser)
-            })
-          } else {
-            // Usuario local existe
-            user.google = {
-              id: profile.id,
-              token: token,
-              name: profile.displayName,
-              email: profile.emails[0].value // pull the first email
-            }
+                newUser.save(err => {
+                  if (err) {
+                    throw err
+                  }
 
-            user.save((err, updatedUser) => {
-              if (err) {
-                throw err
-              }
+                  return done(null, newUser)
+                })
+              } else {
+                // Usuario local existe
+                user.google = {
+                  id: profile.id,
+                  token: token,
+                  name: profile.displayName,
+                  email: profile.emails[0].value // pull the first email
+                }
 
-              return done(null, updatedUser);
-            })
-          } // if/else
-        }) // User.findOne()
-      } // if/else
-    })
+                user.save((err, updatedUser) => {
+                  if (err) {
+                    throw err
+                  }
+
+                  return done(null, updatedUser);
+                })
+              } // if/else
+            }) // User.findOne()
+        } // if/else
+      }) // User.findOne()
   })
 }))

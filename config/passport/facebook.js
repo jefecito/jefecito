@@ -11,6 +11,23 @@ const mongoose = require('mongoose')
  * Variables
  */
 const AUTH = require('../app/auth')
+const CONFIG = {
+  clientID: AUTH.facebookAuth.clientID,
+  clientSecret: AUTH.facebookAuth.clientSecret,
+  callbackURL: AUTH.facebookAuth.callbackURL,
+  profileFields: [
+    'id',
+    'email',
+    'gender',
+    'photos',
+    'link',
+    'locale',
+    'name',
+    'timezone',
+    'updated_time',
+    'verified'
+  ]
+}
 
 /**
  * Models
@@ -30,23 +47,7 @@ passport.deserializeUser((id, done) => {
 /**
  * Facebook
  */
-passport.use(new FacebookStrategy({
-  clientID: AUTH.facebookAuth.clientID,
-  clientSecret: AUTH.facebookAuth.clientSecret,
-  callbackURL: AUTH.facebookAuth.callbackURL,
-  profileFields: [
-    'id',
-    'email',
-    'gender',
-    'photos',
-    'link',
-    'locale',
-    'name',
-    'timezone',
-    'updated_time',
-    'verified'
-  ]
-}, (token, refreshToken, profile, done) => {
+passport.use(new FacebookStrategy(CONFIG, (token, refreshToken, profile, done) => {
   process.nextTick(() => {
     let FILTER = {
       'facebook.id': profile.id
