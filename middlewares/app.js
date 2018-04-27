@@ -48,8 +48,6 @@ module.exports = {
       req.query.token ||
       req.headers['x-access-token']
 
-    console.log('token: ', token)
-
     if (!token) {
       return res.failure(-1, 'Token inválido', 403)
     } else {

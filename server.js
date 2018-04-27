@@ -10,6 +10,7 @@ const bodyParser = require('body-parser')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
 const express = require('express')
+const session = require('express-session')
 const favicon = require('serve-favicon')
 const fs = require('fs')
 const http = require('http')
@@ -20,6 +21,7 @@ const helmet = require('helmet')
 const swaggerUi = require('swaggerize-ui')
 const jsonfile = require('jsonfile')
 const cors = require('cors')
+
 
 /**
  * App configuration
@@ -44,6 +46,12 @@ app.use(logger('dev'))
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: cacheTime
 }))
+
+app.use(session({
+  secret: APP.jwtSecret
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 /**
  * Error log management
