@@ -29,10 +29,6 @@ module.exports = application => {
     .route('/auth/twitter')
     .get(passport.authenticate('twitter'))
 
-  application
-    .route('/auth/twitter/callback')
-    .get(authController.logInTwitter)
-
   /**
    * Ingresar/Registrarse con Facebook
    */
@@ -42,10 +38,6 @@ module.exports = application => {
       scope : 'email'
     }))
 
-  application
-    .route('/auth/facebook/callback')
-    .get(authController.logInFacebook)
-
   /**
    * Ingresar/Registrarse con LinkedIn
    */
@@ -53,11 +45,9 @@ module.exports = application => {
     .route('/auth/linkedin')
     .get(passport.authenticate('linkedin'))
 
-  application
-    .route('/auth/linkedin/callback')
-    .get(authController.logInLinkedIn)
-
-
+  /**
+   * Callback de Redes Sociales
+   */
   application
     .route('/auth/callback/:social')
     .get(authController.logInCallback)
@@ -73,10 +63,6 @@ module.exports = application => {
         'email'
       ]
     }))
-
-  application
-    .route('/auth/google/callback')
-    .get(authController.logInGoogle)
 
   /**
    * Cerrar Sesión
