@@ -121,58 +121,10 @@ exports.registerLocal = (req, res, next) => {
 }
 
 /**
- * Inicio de Sesión / Registro Twitter
+ * Auth Callback Social
  */
-exports.logInTwitter = (req, res, next) => {
-  passport.authenticate('twitter', (err, user, info) => {
-    if (err) {
-      return next(err)
-    }
-
-    if (!user) {
-      return res.failure(-1, 'Authentication failed', 200)
-    }
-
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err)
-      } else {
-        const payload = generatePayload(user)
-        return res.success(payload)
-      } // if/else
-    })
-  })(req, res, next)
-}
-
-/**
- * Inicio de Sesión / Registro Facebook
- */
-exports.logInFacebook = (req, res, next) => {
-  passport.authenticate('facebook', (err, user, info) => {
-    if (err) {
-      return next(err)
-    }
-
-    if (!user) {
-      return res.failure(-1, 'Authentication failed', 200)
-    }
-
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err)
-      } else {
-        const payload = generatePayload(user)
-        return res.success(payload)
-      } // if/else
-    })
-  })(req, res, next)
-}
-
-/**
- * Inicio de Sesión / Registro LinkedIn
- */
-exports.logInLinkedIn = (req, res, next) => {
-  passport.authenticate('linkedin', (err, user, info) => {
+exports.logInCallback = (req, res, next) => {
+  passport.authenticate(req.params.social, (err, user, info) => {
     if (err) {
       return next(err)
     }
@@ -187,34 +139,7 @@ exports.logInLinkedIn = (req, res, next) => {
       } else {
         const payload = generatePayload(user)
         res.writeHead(302, {
-          Location: 'http://localhost:8080/auth/callback?token='+payload.token
-        })
-        res.end()
-      } // if/else
-    })
-  })(req, res, next)
-}
-
-/**
- * Inicio de Sesión / Registro Google
- */
-exports.logInGoogle = (req, res, next) => {
-  passport.authenticate('google', (err, user, info) => {
-    if (err) {
-      return next(err)
-    }
-
-    if (!user) {
-      return res.failure(-1, 'Authentication failed', 200)
-    }
-
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err)
-      } else {
-        const payload = generatePayload(user)
-        res.writeHead(302, {
-          Location: 'http://localhost:8080/auth/callback?token='+payload.token
+          Location: `http://localhost:8080/auth/callback?token=${payload.token}`
         })
         res.end()
       } // if/else

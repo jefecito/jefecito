@@ -16,7 +16,7 @@ module.exports = {
   facebookAuth: {
     clientID: APP.auth.facebook.id,
     clientSecret: APP.auth.facebook.secret,
-    callbackURL: `${URL}/auth/facebook/callback`
+    callbackURL: `${URL}/auth/callback/facebook`
   },
   /**
    * Twitter Credentials
@@ -24,7 +24,7 @@ module.exports = {
   twitterAuth: {
     consumerKey: APP.auth.twitter.id,
     consumerSecret: APP.auth.twitter.secret,
-    callbackURL: `${URL}/auth/twitter/callback`
+    callbackURL: `${URL}/auth/callback/twitter`
   },
   /**
    * Google Credentials
@@ -32,7 +32,7 @@ module.exports = {
   googleAuth: {
     clientID: APP.auth.google.id,
     clientSecret: APP.auth.google.secret,
-    callbackURL: `${URL}/auth/google/callback`
+    callbackURL: `${URL}/auth/callback/google`
   },
   /**
    * LinkedIn Credentials
@@ -40,6 +40,6 @@ module.exports = {
   linkedinAuth: {
     clientID: APP.auth.linkedin.id,
     clientSecret: APP.auth.linkedin.secret,
-    callbackURL: `${URL}/auth/linkedin/callback`
+    callbackURL: `${URL}/auth/callback/linkedin`
   }
 }

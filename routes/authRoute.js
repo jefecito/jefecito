@@ -57,6 +57,11 @@ module.exports = application => {
     .route('/auth/linkedin/callback')
     .get(authController.logInLinkedIn)
 
+
+  application
+    .route('/auth/callback/:social')
+    .get(authController.logInCallback)
+
   /**
    * Ingresar/Registrarse con Google
    */
