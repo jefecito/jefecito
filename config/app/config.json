@@ -2,5 +2,23 @@
   "appName": "jefecito",
   "appURL": "jefecito.io",
   "port": 3000,
+  "social": {
+    "facebook": {
+      "id": "client-secret-id",
+      "secret": "client-secret-here"
+    },
+    "google": {
+      "id": "client-secret-id",
+      "secret": "client-secret-here"
+    },
+    "linkedin": {
+      "id": "client-secret-id",
+      "secret": "client-secret-here"
+    },
+    "twitter": {
+      "id": "client-secret-id",
+      "secret": "client-secret-here"
+    }
+  },
   "configured": true
 }

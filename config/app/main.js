@@ -18,6 +18,24 @@ module.exports = {
   name: CONFIG.appName,
   domain: CONFIG.appURL,
   port: CONFIG.port,
+  auth: {
+    facebook: {
+      id: CONFIG.social.facebook.id,
+      secret: CONFIG.social.facebook.secret
+    },
+    google: {
+      id: CONFIG.social.google.id,
+      secret: CONFIG.social.google.secret
+    },
+    linkedin: {
+      id: CONFIG.social.linkedin.id,
+      secret: CONFIG.social.linkedin.secret
+    },
+    twitter: {
+      id: CONFIG.social.twitter.id,
+      secret: CONFIG.social.twitter.secret
+    }
+  },
   url: 'http://',
   dev: {
     url: `http://localhost:${CONFIG.port}`
