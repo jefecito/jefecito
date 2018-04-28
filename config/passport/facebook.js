@@ -66,56 +66,61 @@ passport.use(new FacebookStrategy(CONFIG, (token, refreshToken, profile, done) =
           'local.email': profile.emails[0].value
         }
 
-        User.findOne(FILTER, (err, user) => {
-          if (err) {
-            return res.failure(-1, 'Error social', 200)
-          } else if(!user) {
-            // Usuario local no existe
-            const newUser = new User({
-              facebook: {
+        User
+          .findOne(FILTER, (err, user) => {
+            if (err) {
+              return res.failure(-1, 'Error social', 200)
+            } else if (!user) {
+              // Usuario local no existe
+              const newUser = new User({
+                facebook: {
+                  id: profile.id,
+                  token: token,
+                  name: `${profile.name.givenName} ${profile.name.familyName}`,
+                  email: profile.emails[0].value,
+                  avatar: profile.photos[0].value,
+                },
+                local: {
+                  createdAt: Date.now(),
+                  roles: ['user'],
+                  username: `${profile.name.givenName} ${profile.name.familyName}`,
+                  email: profile.emails[0].value,
+                  avatar: profile.photos[0].value,
+                  creationMethod: 'fb',
+                  isConfirmed: true
+                }
+              })
+
+              newUser
+                .save(err => {
+                  if (err) {
+                    throw err
+                  } else {
+                    return done(null, newUser)
+                  } // if/else
+                }) // newUser.save()
+            } else {
+              // Usuario local ya existe
+              user.local.username = `${profile.name.givenName} ${profile.name.familyName}`
+
+              user.facebook = {
                 id: profile.id,
                 token: token,
-                name: profile.name.givenName + ' ' + profile.name.familyName,
+                name: `${profile.name.givenName} ${profile.name.familyName}`,
                 email: profile.emails[0].value,
-                avatar: profile.photos[0].value,
-              },
-              local: {
-                createdAt: Date.now(),
-                roles: ['user'],
-                username: profile.name.givenName + ' ' + profile.name.familyName,
-                email: profile.emails[0].value,
-                avatar: profile.photos[0].value,
-                creationMethod: 'fb',
-                isConfirmed: true
-              }
-            })
-
-            newUser.save(err => {
-              if (err) {
-                throw err
+                avatar: profile.photos[0].value
               }
 
-              return done(null, newUser)
-            })
-          } else {
-            // Usuario local ya existe
-            user.facebook = {
-              id: profile.id,
-              token: token,
-              name: profile.name.givenName + ' ' + profile.name.familyName,
-              email: profile.emails[0].value,
-              avatar: profile.photos[0].value
-            }
-
-            user.save((err, updatedUser) => {
-              if (err) {
-                throw err
-              }
-
-              return done(null, updatedUser)
-            })
-          }
-        })
+              user
+                .save((err, updatedUser) => {
+                  if (err) {
+                    throw err
+                  } else {
+                    return done(null, updatedUser)
+                  } // iF/else
+                }) // user.save()
+            } // if/else
+          }) // User.findOne()
       } // if/else
     }) // User.findOne()
   })

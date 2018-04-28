@@ -62,7 +62,7 @@ passport.use(new GoogleStrategy(CONFIG, (token, refreshToken, profile, done) => 
             .findOne(FILTER, (err, user) => {
               if (err) {
                 return res.failure(-1, 'Error social', 200)
-              } else if(!user) {
+              } else if (!user) {
                 // Usuario local no existe
                 const newUser = new User({
                   google: {
@@ -73,7 +73,9 @@ passport.use(new GoogleStrategy(CONFIG, (token, refreshToken, profile, done) => 
                   },
                   local: {
                     createdAt: Date.now(),
-                    roles: ['user'],
+                    roles: [
+                      'user'
+                    ],
                     username: profile.displayName,
                     email: profile.emails[0].value,
                     avatar: profile.photos[0].value,

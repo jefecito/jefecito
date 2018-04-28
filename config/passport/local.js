@@ -25,7 +25,11 @@ passport.deserializeUser((user, done) => {
  * Local
  */
 passport.use('local-login', new LocalStrategy((username, password, done) => {
-  if(validator.isEmail(username)) {
+  if (!validator.isEmail(username)) {
+    return done(null, false, {
+      error: 'Correo electrónico no válido'
+    })
+  } else {
     const FILTER = {
       'local.email': username
     }
@@ -36,7 +40,7 @@ passport.use('local-login', new LocalStrategy((username, password, done) => {
           return done(err)
         } else if (!user) {
           return done(null, false, {
-            error: 'error en usuario/contraseña'
+            error: 'Error en usuario/contraseña'
           })
         } else if (!user.validPassword(password, user.local.password)) {
           return done(null, false, {
@@ -44,11 +48,7 @@ passport.use('local-login', new LocalStrategy((username, password, done) => {
           })
         } else {
           return done(null, user)
-        }
-      })
-  } else {
-    return done(null, false, {
-      error: 'error en usuario/Contraseña'
-    })
-  }
+        } // if/else
+      }) // User.findOne()
+  } // if/else
 }))
