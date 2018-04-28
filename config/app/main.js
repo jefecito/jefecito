@@ -45,15 +45,32 @@ module.exports = {
   },
   jwtSecret: 'j3f3c1t0_jwtS3cr3t',
   getTransporter () {
-    return nodemailer.createTransport({
-      host: '',
-      port: 465,
-      secure: true,
+    let t
+    /**
+     * Service GMAIL, etc:
+     */
+    t = nodemailer.createTransport({
+      service: '',
       auth: {
         user: '',
         pass: ''
       }
     })
+    /**
+     * Own Host (remove comment)
+     */
+    /*
+      t = nodemailer.createTransport({
+        host: '',
+        port: 465,
+        secure: true,
+        auth: {
+          user: '',
+          pass: ''
+        }
+      })
+    */
+    return t
   },
   getENV () {
     if (process.env.NODE_ENV == 'production') {

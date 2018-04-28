@@ -7,6 +7,8 @@ const passport = require('passport')
 const validator = require('validator')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
+const EmailTemplate = require('email-templates-v2').EmailTemplate
+const path = require('path')
 
 /**
  * Models
@@ -17,6 +19,18 @@ const User = mongoose.model('User')
  * APP cfg
  */
 const APP = require('../config/app/main')
+const transporter = APP.getTransporter()
+
+/**
+ * Export Email Templates
+ */
+const confirmEmail = new EmailTemplate(
+  path.join(
+    __dirname,
+    '../templates',
+    'confirmemail'
+  )
+)
 
 /**
  * Inicio de Sesión Local
@@ -32,7 +46,6 @@ exports.logInLocal = (req, res, next) => {
     }
   
     req.logIn(user, (err) => {
-      console.log('err: ', err)
       if (err) {
         return next(err);
       } else {
@@ -48,75 +61,85 @@ exports.logInLocal = (req, res, next) => {
  */
 exports.registerLocal = (req, res, next) => {
   const B = req.body
-  const username = validator.escape(B.username) || ''
   const password = B.password || ''
+  const rePassword = B.rePassword || ''
   const email = B.email || ''
-  const isValidEmail = validator.isEmail(email)
 
-  if(isValidEmail && password.length > 7) {
+  if (!validator.isEmail(email)) {
+    return res.failure(-1, 'Debe ingresar un email válido', 200)
+  } else if (password.length < 7) {
+    return res.failure(-1, 'La contraseña debe ser mayor a 7 caracteres', 200)
+  } else if (password !== rePassword) {
+    return res.failure(-1, 'La contraseña deben coincidir', 200)
+  } else {
     const FILTER = {
       'local.email': email
     }
-
-    User.findOne(FILTER, (err, user) => {
-      if (err) {
-        return res.failure(-1, err, 200);
-      } else if(!user) {
-        let newUser = new User({
-          local: {
-            createdAt: Date.now(),
-            username: username,
-            email: email,
-            roles: ['user'],
-            creationMethod: 'local',
-            isConfirmed: true // set to false when email send added
-          }
-        })
-
-        newUser.local.password = newUser.generateHash(password)
-
-        newUser.save((err, data) => {
-          if (err) {
-            return res.failure(-1, err, 200)
-          } else {
-            /*
-              // Agregar envio de email
-
+  
+    User
+      .findOne(FILTER, (err, user) => {
+        if (err) {
+          return res.failure(-1, err, 200);
+        } else if (!user) {
+          let newUser = new User({
+            local: {
+              createdAt: Date.now(),
+              email: email,
+              roles: [
+                'user'
+              ],
+              creationMethod: 'local',
+              isConfirmed: false
+            }
+          })
+  
+          newUser.local.password = newUser.generateHash(password)
+  
+          newUser.save((err, data) => {
+            if (err) {
+              return res.failure(-1, err, 200)
+            } else {
               let info = {
-                app: appConfig,
-                username: data.local.username,
+                app: {
+                  name: APP.name,
+                  url: APP.getENV().url,
+                  clientURI: `http://localhost:8080`
+                },
+                email: data.local.email,
                 id: data._id
               }
 
-              emailConfirm.render(info, (err, result) => {
+              confirmEmail.render(info, (err, result) => {
                 if(err) {
                   console.log(err);
                 } else {
                   var mailOptions = {
-                    from: 'info@debugthebox.com',
-                    to: [email],
-                    subject: 'Bienvenido '+data.local.username+' a '+appConfig.appName,
+                    from: 'info@jefecito.io',
+                    to: [
+                      email
+                    ],
+                    subject: `Bienvenido ${data.local.email} a ${APP.name}`,
                     html: result.html
-                  };
-
-                  transporter.sendMail(mailOptions, (error, info) => {
-                    if(error)
-                      console.log(error, info);
-                    else
-                      console.log('Message sent: ' + info.response);
-                  });
+                  }
+    
+                  transporter
+                    .sendMail(mailOptions, (error, info) => {
+                      if (error) {
+                        console.log(error, info)
+                      } else {
+                        console.log('Message sent: ' + info.response)
+                      }
+                    })
                 }
               })
-            */
-            return res.success('Usuario registrado correctamente', 200)
-          }
-        })
-      } else {
-        return res.failure(-1, 'Ese correo existe, pruebe registrarse con otro', 200)
-      }
-    })
-  } else {
-    return res.failure(-1, 'Datos inválidos', 200)
+
+              return res.success(`Se ha enviado un correo electrónico a ${data.local.email} para confirmar la cuenta`, 200)
+            }
+          })
+        } else {
+          return res.failure(-1, 'Ese correo existe, pruebe registrarse con otro', 200)
+        }
+      })
   }
 }
 

@@ -91,6 +91,14 @@ passport.use(new GoogleStrategy(CONFIG, (token, refreshToken, profile, done) => 
                 })
               } else {
                 // Usuario local existe
+                if (!user.local.username) {
+                  user.local.username = profile.displayName
+                }
+
+                if (!user.local.email) {
+                  user.local.email = profile.emails[0].value
+                }
+
                 user.google = {
                   id: profile.id,
                   token: token,

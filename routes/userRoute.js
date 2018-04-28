@@ -39,7 +39,14 @@ module.exports = application => {
     .route('/api/user/me')
     .post(mw.rateLimiter, mw.requireAuth, userController.currentUserInfo)
     .put(mw.rateLimiter, mw.requireAuth, userController.updateCurrentUserInfo)
-  
+
+  /**
+   * Confirmo Email
+   */
+  application
+    .route('/api/user/confirm')
+    .get(mw.rateLimiter, userController.confirmEmail)
+
   /**
    * Actualizo mi avatar
    */

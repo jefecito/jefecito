@@ -210,6 +210,45 @@ exports.currentUserInfo = (req, res, next) => {
 }
 
 /**
+ * Confirmo el Email del usuario
+ */
+exports.confirmEmail = (req, res, next) => {
+  const Q = req.query
+
+  if (!Q.id) {
+    return res.failure(-1, 'Usuario inválido', 200)
+  } else {
+    const FILTER = {
+      _id: Q.id
+    }
+
+    const UPDATE = {
+      $set: {
+        'local.isConfirmed': true
+      }
+    }
+
+    const EXTRA = {
+      new: true,
+      safe: true
+    }
+
+    User
+      .findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, user) => {
+        if (err) {
+          return res.failure(-1, err, 200)
+        } else {
+          const response = {
+            email: user.local.email
+          }
+
+          return res.success(response, 200)
+        } // if/else
+      }) // User.findOneAndUpdate()
+  } // if/else
+}
+
+/**
  * Actualiza el nombre de usuario, e email.
  */
 exports.updateCurrentUserInfo = (req, res, next) => {
