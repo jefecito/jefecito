@@ -60,10 +60,11 @@ exports.logInLocal = (req, res, next) => {
  * Registro Local
  */
 exports.registerLocal = (req, res, next) => {
-  const B = req.body
-  const password = B.password || ''
-  const rePassword = B.rePassword || ''
-  const email = B.email || ''
+  const {
+    password,
+    rePassword,
+    email
+  } = req.body
 
   if (!validator.isEmail(email)) {
     return res.failure(-1, 'Debe ingresar un email válido', 200)
@@ -84,7 +85,7 @@ exports.registerLocal = (req, res, next) => {
           let newUser = new User({
             local: {
               createdAt: Date.now(),
-              email: email,
+              email,
               roles: [
                 'user'
               ],
@@ -109,29 +110,30 @@ exports.registerLocal = (req, res, next) => {
                 id: data._id
               }
 
-              confirmEmail.render(info, (err, result) => {
-                if(err) {
-                  console.log(err);
-                } else {
-                  var mailOptions = {
-                    from: 'info@jefecito.io',
-                    to: [
-                      email
-                    ],
-                    subject: `Bienvenido ${data.local.email} a ${APP.name}`,
-                    html: result.html
+              confirmEmail
+                .render(info, (err, result) => {
+                  if(err) {
+                    console.log(err);
+                  } else {
+                    var mailOptions = {
+                      from: 'info@jefecito.io',
+                      to: [
+                        email
+                      ],
+                      subject: `Bienvenido ${data.local.email} a ${APP.name}`,
+                      html: result.html
+                    }
+      
+                    transporter
+                      .sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                          console.log(error, info)
+                        } else {
+                          console.log('Message sent: ' + info.response)
+                        }
+                      })
                   }
-    
-                  transporter
-                    .sendMail(mailOptions, (error, info) => {
-                      if (error) {
-                        console.log(error, info)
-                      } else {
-                        console.log('Message sent: ' + info.response)
-                      }
-                    })
-                }
-              })
+                })
 
               return res.success(`Se ha enviado un correo electrónico a ${data.local.email} para confirmar la cuenta`, 200)
             }

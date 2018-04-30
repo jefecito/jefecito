@@ -67,7 +67,7 @@ passport.use(new GoogleStrategy(CONFIG, (token, refreshToken, profile, done) => 
                 const newUser = new User({
                   google: {
                     id: profile.id,
-                    token: token,
+                    token,
                     name: profile.displayName,
                     email: profile.emails[0].value
                   },
@@ -103,18 +103,19 @@ passport.use(new GoogleStrategy(CONFIG, (token, refreshToken, profile, done) => 
 
                 user.google = {
                   id: profile.id,
-                  token: token,
+                  token,
                   name: profile.displayName,
                   email: profile.emails[0].value // pull the first email
                 }
 
-                user.save((err, updatedUser) => {
-                  if (err) {
-                    throw err
-                  }
-
-                  return done(null, updatedUser);
-                })
+                user
+                  .save((err, updatedUser) => {
+                    if (err) {
+                      throw err
+                    } else {
+                      return done(null, updatedUser)
+                    } // if/else
+                  }) // user.save()
               } // if/else
             }) // User.findOne()
         } // if/else

@@ -25,11 +25,11 @@ const APP = require('../config/app/main')
  * Trae todos los usuarios o específico según ID
  */
 exports.getAllUsers = (req, res, next) => {
-  const Q = req.query
+  const { id } = req.query
   let FILTER = {}
 
-  if (Q.id) {
-    FILTER._id = Q.id
+  if (!!id) {
+    FILTER._id = id
   }
 
   User
@@ -46,55 +46,64 @@ exports.getAllUsers = (req, res, next) => {
  * El administrador crea un usuario
  */
 exports.createUser = (req, res, next) => {
-  const B = req.body
-  const username = validator.escape(B.username) || ''
+  let {
+    username,
+    email,
+    password
+  } = req.body
 
-  if (validator.isEmail(B.email) && B.password.length > 7) {
+  username = validator.escape(username)
+
+  if (validator.isEmail(email) && password.length > 7) {
     return res.failure(-1, 'Parámetros insuficientes o incorrectos', 200)
   }
 
   const FILTER = {
-    'local.email': B.email
+    'local.email': email
   }
 
-  User.findOne(FILTER, (err, user) => {
-    if (err) {
-      return res.failure(-1, err, 200)
-    } else if (!user) {
-      let newUser = new User({
-        local: {
-          createdAt: Date.now(),
-          username: username,
-          email: B.email,
-          roles: ['user'],
-          creationMethod: 'local',
-          isConfirmed: true // set to false when email send added
-        }
-      })
+  User
+    .findOne(FILTER, (err, user) => {
+      if (err) {
+        return res.failure(-1, err, 200)
+      } else if (!user) {
+        let newUser = new User({
+          local: {
+            createdAt: Date.now(),
+            username: username,
+            email: email,
+            roles: [
+              'user'
+            ],
+            creationMethod: 'local',
+            isConfirmed: true // set to false when email send added
+          }
+        })
 
-      newUser.local.password = newUser.generateHash(B.password)
+        newUser.local.password = newUser.generateHash(password)
 
-      newUser.save((err, user) => {
-        if (err) {
-          return res.failure(-1, err, 200)
-        } else {
-          // Agregar envio de email
-          return res.success('Usuario registrado', 200)
-        }
-      })
-    } else {
-      return res.failure(-1, 'Ese correo existe, pruebe crearlo con otro', 200)
-    }
-  })
+        newUser
+          .save((err, user) => {
+            if (err) {
+              return res.failure(-1, err, 200)
+            } else {
+              // Agregar envio de email
+              return res.success('Usuario registrado', 200)
+            }
+          })
+      } else {
+        return res.failure(-1, 'Ese correo existe, pruebe crearlo con otro', 200)
+      }
+    })
 }
 
 /**
  * Elimina un usuario específico según ID
  */
 exports.removeUser = (req, res, next) => {
-  const B = req.body
+  const { id } = req.body
 
-  if (B.id === undefined) {
+  if (!!id) {
     return res.failure(-1, 'Parámetros Insuficientes', 200)
   }
 
@@ -442,7 +451,7 @@ exports.requestPassword = (req, res, next) => {
             console.log('No se envia correo, usuario registrado con redes sociales')
             return res.success('En breve recibirá un correo con un link a la dirección indicada', 200)
           } else {
-            user.local.resetToken        = randomstring.generate(50)
+            user.local.resetToken = randomstring.generate(50)
             user.local.resetTokenExpires = Date.now() + 3600000 // 1 hora
 
             user
@@ -450,35 +459,41 @@ exports.requestPassword = (req, res, next) => {
                 if (err) {
                   return res.failure(-1, err, 200)
                 } else {
-                  var info = {
+                  const info = {
                     app: appConfig,
                     user: user.local.username,
                     email: email,
                     token: user.local.resetToken
-                  }; // info
+                  } // info
 
-                  emailTx.render(info, (err, result) => {
-                    if(err) {
-                      console.log(err);
-                    } else {
-                      var mailOptions = {
-                        from: 'no-reply@debugthebox.com', 
-                        to: [email, 'maxi.canellas@gmail.com', 'nestor.2005@gmail.com'],
-                        subject: 'Resetear contraseña',
-                        html: result.html
-                      }; // mailOptions
+                  emailTx
+                    .render(info, (err, result) => {
+                      if (err) {
+                        console.log(`Error: ${err}`)
+                      } else {
+                        const mailOptions = {
+                          from: 'no-reply@debugthebox.com', 
+                          to: [
+                            email
+                          ],
+                          subject: 'Resetear contraseña',
+                          html: result.html
+                        } // mailOptions
 
-                      transporter.sendMail(mailOptions, (error, info) => {
-                        if (error)
-                          console.log(error, info);
-                        else
-                          console.log('Message sent: ' + info.response);
-                      }); // transporter.sendMail()
-                    } // if/else
-                  }); // emailTx.render()
+                        transporter
+                          .sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                              console.log(error)
+                            } else {
+                              console.log(`Correo electrónico enviado: ${info.response}`)
+                            } // if/else
+                          }) // transporter.sendMail()
+                      } // if/else
+                    }) // emailTx.render()
+
                   return res.success('En breve recibirá un correo con un link a la dirección indicada', 200);
                 } // if/else
-              })
+              }) // user.save()
           } // if/else
         } // if/else
       }) // User.find()

@@ -46,77 +46,85 @@ passport.use(new LinkedInStrategy(CONFIG, (accessToken, refreshToken, profile, d
       'linkedin.id': profile.id
     }
 
-    User.findOne(FILTER, (err, user) => {
-      if (err) {
-        return done(err)
-      }
-
-      if (user) {
-        return done(null, user)
-      } else {
-        FILTER = {
-          'local.email': profile.emails[0].value
+    User
+      .findOne(FILTER, (err, user) => {
+        if (err) {
+          return done(err)
         }
 
-        User
-          .findOne(FILTER, (err, user) => {
-            if (err) {
-              return res.failure(-1, 'Error social', 200)
-            } else if (!user) {
-              const newUser = new User({
-                linkedin: {
+        if (user) {
+          return done(null, user)
+        } else {
+          FILTER = {
+            'local.email': profile.emails[0].value
+          }
+
+          User
+            .findOne(FILTER, (err, user) => {
+              if (err) {
+                return res.failure(-1, 'Error social', 200)
+              } else if (!user) {
+                const newUser = new User({
+                  linkedin: {
+                    id: profile.id,
+                    token: accessToken,
+                    name: profile.displayName,
+                    email: profile.emails[0].value,
+                    avatar: profile.photos[0].value
+                  },
+                  local: {
+                    createdAt: Date.now(),
+                    roles: [
+                      'user'
+                    ],
+                    username: profile.displayName,
+                    email: profile.emails[0].value,
+                    avatar: profile.photos[0].value,
+                    bio: profile._json.summary,
+                    creationMethod: 'li',
+                    isConfirmed: true
+                  }
+                })
+
+                newUser
+                  .save(err => {
+                    if (err) {
+                      throw err
+                    } else {
+                      return done(null, newUser)
+                    } // if/else
+                  }) // newUser.save()
+              } else {
+                // Usuario local ya existe
+                if (user.local.username) {
+                  user.local.username = profile.displayName
+                }
+
+                if (user.local.email) {
+                  user.local.email = profile.emails[0].value
+                }
+
+                user.local.bio = profile._json.summary
+
+                user.linkedin = {
                   id: profile.id,
                   token: accessToken,
                   name: profile.displayName,
                   email: profile.emails[0].value,
-                  avatar: profile.photos[0].value
-                },
-                local: {
-                  createdAt: Date.now(),
-                  roles: [
-                    'user'
-                  ],
-                  username: profile.displayName,
-                  email: profile.emails[0].value,
                   avatar: profile.photos[0].value,
-                  bio: profile._json.summary,
-                  creationMethod: 'li',
-                  isConfirmed: true
                 }
-              })
 
-              newUser
-                .save(err => {
-                  if (err) {
-                    throw err
-                  } else {
-                    return done(null, newUser)
-                  } // if/else
-                }) // newUser.save()
-            } else {
-              // Usuario local ya existe
-              user.local.username = profile.displayName
-              user.local.bio = profile._json.summary
-
-              user.linkedin = {
-                id: profile.id,
-                token: accessToken,
-                name: profile.displayName,
-                email: profile.emails[0].value,
-                avatar: profile.photos[0].value,
-              }
-
-              user
-                .save((err, updatedUser) => {
-                  if (err) {
-                    throw err
-                  } else {
-                    return done(null, updatedUser)
-                  } // if/else
-                }) // user.save()
-            } // if/else
-          }) // User.findOne()
-      } // if/else
-    }) // User.findOne()
+                user
+                  .save((err, updatedUser) => {
+                    if (err) {
+                      throw err
+                    } else {
+                      return done(null, updatedUser)
+                    } // if/else
+                  }) // user.save()
+              } // if/else
+            }) // User.findOne()
+        } // if/else
+      }) // User.findOne()
   })
 }))

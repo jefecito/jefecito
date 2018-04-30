@@ -53,13 +53,15 @@ passport.use(new TwitterStrategy(CONFIG, (token, tokenSecret, profile, done) => 
           const newUser = new User({
             twitter: {
               id: profile.id,
-              token: token,
+              token,
               username: profile.displayName,
               avatar: profile._json.profile_image_url_https
             },
             local: {
               createdAt: Date.now(),
-              roles: ['user'],
+              roles: [
+                'user'
+              ],
               username: profile.displayName,
               avatar: profile._json.profile_image_url_https,
               creationMethod: 'tw',
