@@ -8,6 +8,9 @@ const validator = require('validator')
 const mkdirp = require('mkdirp')
 const multer = require('multer')
 const randomstring = require("randomstring")
+const EmailTemplate = require('email-templates-v2').EmailTemplate
+const path = require('path')
+const bcrypt = require('bcrypt')
 
 /**
  * Models
@@ -18,6 +21,18 @@ const User = mongoose.model('User')
  * APP cfg
  */
 const APP = require('../config/app/main')
+const transporter = APP.getTransporter()
+
+/**
+ * Export Email Templates
+ */
+const requestPasswordTemplate = new EmailTemplate(
+  path.join(
+    __dirname,
+    '../templates',
+    'resetemail'
+  )
+)
 
 /**
  * Admin APIs:
@@ -25,7 +40,10 @@ const APP = require('../config/app/main')
  * Trae todos los usuarios o específico según ID
  */
 exports.getAllUsers = (req, res, next) => {
-  const { id } = req.query
+  const {
+    id
+  } = req.query
+
   let FILTER = {}
 
   if (!!id) {
@@ -101,9 +119,11 @@ exports.createUser = (req, res, next) => {
  * Elimina un usuario específico según ID
  */
 exports.removeUser = (req, res, next) => {
-  const { id } = req.body
+  const {
+    id
+  } = req.body
 
-  if (!!id) {
+  if (!id) {
     return res.failure(-1, 'Parámetros Insuficientes', 200)
   }
 
@@ -151,15 +171,20 @@ exports.getAllAdmins = (req, res, next) => {
  * de un usuario específico (id)
  */
 exports.toggleAdminPriviliges = (req, res, next) => {
-  const B = req.body
+  const {
+    id,
+    toAdmin
+  } = req.body
 
-  if (!B.id) {
+  if (!id) {
     return res.failure(-1, 'Parámetros Insuficientes', 200)
   } else {
-    const role = B.toAdmin ? ['admin'] : ['user']
+    const role = toAdmin ?
+      ['admin'] :
+      ['user']
 
     const FILTER = {
-      _id: B.id
+      _id: id
     }
 
     const UPDATE = {
@@ -173,13 +198,14 @@ exports.toggleAdminPriviliges = (req, res, next) => {
       safe: true
     }
 
-    User.findOneAndUpdate(FILTER, UPDATE, EXTRAS, (err, userUpdated) => {
-      if (err) {
-        return res.failure(-1, err, 200)
-      } else {
-        return res.success(userUpdated, 200)
-      }
-    })
+    User
+      .findOneAndUpdate(FILTER, UPDATE, EXTRAS, (err, userUpdated) => {
+        if (err) {
+          return res.failure(-1, err, 200)
+        } else {
+          return res.success(userUpdated, 200)
+        }
+      })
   }
 }
 
@@ -222,13 +248,15 @@ exports.currentUserInfo = (req, res, next) => {
  * Confirmo el Email del usuario
  */
 exports.confirmEmail = (req, res, next) => {
-  const Q = req.query
+  const {
+    id
+  } = req.query
 
-  if (!Q.id) {
+  if (!id) {
     return res.failure(-1, 'Usuario inválido', 200)
   } else {
     const FILTER = {
-      _id: Q.id
+      _id: id
     }
 
     const UPDATE = {
@@ -431,73 +459,157 @@ exports.changePassword = (req, res, next) => {
  * Usuario olvida contraseña
  */
 exports.requestPassword = (req, res, next) => {
-  const B = req.body
-  const email = B.email
+  const {
+    email = ''
+  } = req.body
 
   if (!validator.isEmail(email)) {
     return res.failure(-1, 'Ingrese un email válido', 200)
   } else {
     const FILTER = {
-      'local.email': email
+      'local.email': email,
+      'local.creationMethod': 'local'
+    }
+
+    const UPDATE = {
+      $set: {
+        'local.resetPassword.token': randomstring.generate(50),
+        'local.resetPassword.tokenExpires': Date.now() + 3600000
+      }
+    }
+
+    const EXTRA = {
+      safe: true,
+      new: true
     }
 
     User
-      .findOne(FILTER, (err, user) => {
-        if (!user) {
-          console.log('No se envia correo, no existe usuario creado con el correo ingresado')
+      .findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, user) => {
+        if (err) {
+          console.log(`No se envia correo. Error: ${err}`)
           return res.success('En breve recibirá un correo con un link a la dirección indicada', 200)
         } else {
-          if (user.local.creationMethod != 'local') {
-            console.log('No se envia correo, usuario registrado con redes sociales')
-            return res.success('En breve recibirá un correo con un link a la dirección indicada', 200)
-          } else {
-            user.local.resetToken = randomstring.generate(50)
-            user.local.resetTokenExpires = Date.now() + 3600000 // 1 hora
+          const info = {
+            app: {
+              name: APP.name,
+              url: APP.getENV().url,
+              clientURI: `http://localhost:8080`
+            },
+            email,
+            token: user.local.resetPassword.token
+          } // info
 
-            user
-              .save((err) => {
-                if (err) {
-                  return res.failure(-1, err, 200)
-                } else {
-                  const info = {
-                    app: appConfig,
-                    user: user.local.username,
-                    email: email,
-                    token: user.local.resetToken
-                  } // info
+          requestPasswordTemplate
+            .render(info, (err, result) => {
+              if (err) {
+                console.log(`Error: ${err}`)
+              } else {
+                const mailOptions = {
+                  from: 'info@jefecito.io', 
+                  to: [
+                    email
+                  ],
+                  subject: 'Restrablecer contraseña',
+                  html: result.html
+                }
 
-                  emailTx
-                    .render(info, (err, result) => {
-                      if (err) {
-                        console.log(`Error: ${err}`)
-                      } else {
-                        const mailOptions = {
-                          from: 'no-reply@debugthebox.com', 
-                          to: [
-                            email
-                          ],
-                          subject: 'Resetear contraseña',
-                          html: result.html
-                        } // mailOptions
+                transporter
+                  .sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                      console.log(error)
+                    } else {
+                      console.log(`Correo electrónico enviado: ${info.response}`)
+                    } // if/else
+                  }) // transporter.sendMail()
+              } // if/else
+            }) // emailTx.render()
 
-                        transporter
-                          .sendMail(mailOptions, (error, info) => {
-                            if (error) {
-                              console.log(error)
-                            } else {
-                              console.log(`Correo electrónico enviado: ${info.response}`)
-                            } // if/else
-                          }) // transporter.sendMail()
-                      } // if/else
-                    }) // emailTx.render()
-
-                  return res.success('En breve recibirá un correo con un link a la dirección indicada', 200);
-                } // if/else
-              }) // user.save()
-          } // if/else
-        } // if/else
-      }) // User.find()
+          return res.success('En breve recibirá un correo con un link a la dirección indicada', 200)
+        }
+      })
   }
+}
+
+/**
+ * Usuario cambia contraseña en base a requestPassword
+ */
+exports.resetPassword = (req, res, next) => {
+  const {
+    token,
+    password
+  } = req.body
+
+  console.log(req.body)
+
+  if (password.length < 7) {
+    return res.failure(-1, 'La contraseña debe ser mayor a siete caracteres', 200)
+  } else if(!token) {
+    return res.failure(-1, 'Token inválido', 200)
+  } else {
+    const FILTER = {
+      'local.resetPassword.token': token,
+      'local.resetPassword.tokenExpires': {
+        $gt: Date.now()
+      }
+    }
+
+    const UPDATE = {
+      $set: {
+        'local.password': bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
+        'local.resetPassword.token': undefined,
+        'local.resetPassword.tokenExpires': undefined
+      }
+    }
+
+    const EXTRA = {
+      safe: true,
+      new: true
+    }
+
+    User
+      .findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, userUpdated) => {
+        console.log('err: ', err)
+        console.log('userUpdated: ', userUpdated)
+        if (err) {
+          return res.failure(-1, err, 200)
+        } if(!userUpdated) {
+          return res.failure(-1, 'Usuario inválido', 200)
+        } else {
+          return res.success('Contraseña actualizada', 200)
+        }
+      })
+  } // if/else
+}
+
+/**
+ * Verifica que el token no este expirado 
+ * o sea un token válido, y devuelvo la hora
+ * en que expira
+ */
+exports.getInfoTokenPassword = (req, res, next) => {
+  const {
+    token = ''
+  } = req.query
+
+  if (!token) {
+    return res.failure(-1, 'Token inválido', 200)
+  }
+
+  const FILTER = {
+    'local.resetPassword.token': token,
+    'local.resetPassword.tokenExpires': {
+      $gt: Date.now()
+    }
+  }
+
+  User
+    .findOne(FILTER, (err, user) => {
+      if (!user) {
+        return res.failure(-1, 'Token inválido o expirado', 200)
+      } else {
+        return res.success(user.local.resetPassword.tokenExpires, 200)
+      }
+    }) // User.findOne()
 }
 
 /**

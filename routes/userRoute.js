@@ -10,6 +10,7 @@ module.exports = application => {
   /**
    * Admin APIs:
    * 
+   * 
    * GET: Listado de Usuarios
    * POST: Creación de Usuarios
    * DELETE: Eliminación de Usuarios
@@ -31,6 +32,7 @@ module.exports = application => {
 
   /**
    * User APIs:
+   * 
    * 
    * GET: Trae información del usuario
    * PUT: Actualiza nombre de usuario y correo electronico
@@ -64,9 +66,23 @@ module.exports = application => {
     .put(mw.rateLimiter, mw.requireAuth, userController.changePassword)
 
   /**
+   * Trae información de un token para resetear contraseña
+   */
+  application
+    .route('/api/user/token')
+    .get(mw.rateLimiter, userController.getInfoTokenPassword)
+
+  /**
    * Usuario olvida contraseña
    */
   application
     .route('/api/user/me/request-password')
     .put(mw.rateLimiter, userController.requestPassword)
+
+  /**
+   * Usuario cambia su contraseña en base (requestPassowrd)
+   */
+  application
+    .route('/api/user/me/reset-password')
+    .put(mw.rateLimiter, userController.resetPassword)
 }

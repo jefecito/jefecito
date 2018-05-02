@@ -4,7 +4,7 @@
  * Variables
  */
 const APP = require('./main')
-const URL = APP.getENV().url  //'http://localhost:8080'
+const URL = APP.getENV().url
 
 /**
  * Export Auth

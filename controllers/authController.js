@@ -127,7 +127,7 @@ exports.registerLocal = (req, res, next) => {
                     transporter
                       .sendMail(mailOptions, (error, info) => {
                         if (error) {
-                          console.log(error, info)
+                          console.log(error)
                         } else {
                           console.log('Message sent: ' + info.response)
                         }

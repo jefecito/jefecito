@@ -4,20 +4,20 @@
   "port": 3000,
   "social": {
     "facebook": {
-      "id": "client-secret-id",
-      "secret": "client-secret-here"
+      "id": "177648692891144",
+      "secret": "20b76a56b831d4396a83678becd1676f"
     },
     "google": {
-      "id": "client-secret-id",
-      "secret": "client-secret-here"
+      "id": "988044907062-nq84msrsoir2rlqf70hforvb6m6s114e.apps.googleusercontent.com",
+      "secret": "bhyy2ACEO1-XrmLlm_bE6cbu"
     },
     "linkedin": {
-      "id": "client-secret-id",
-      "secret": "client-secret-here"
+      "id": "77xebjlvcilx4e",
+      "secret": "B66h9BDef0QhPyLl"
     },
     "twitter": {
-      "id": "client-secret-id",
-      "secret": "client-secret-here"
+      "id": "Tr7k5kk4IBXXTBPcIv3UnwPU3",
+      "secret": "ZHzbL5PSUL5psLsEZf9TMNT5jSZUpuxqSwvW6nSqyvvZSrewQU"
     }
   },
   "configured": true

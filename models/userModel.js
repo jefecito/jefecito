@@ -34,13 +34,15 @@ const UserSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
-    resetToken: {
-      type: String,
-      default: undefined
-    },
-    resetTokenExpires: {
-      type: Date,
-      default: undefined
+    resetPassword: {
+      token: {
+        type: String,
+        default: undefined
+      },
+      tokenExpires: {
+        type: Date,
+        default: undefined
+      }
     },
     uploadedDocuments:[{
       type: mongoose.Schema.Types.ObjectId,
