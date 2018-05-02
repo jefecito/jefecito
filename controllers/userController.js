@@ -539,8 +539,6 @@ exports.resetPassword = (req, res, next) => {
     password
   } = req.body
 
-  console.log(req.body)
-
   if (password.length < 7) {
     return res.failure(-1, 'La contraseña debe ser mayor a siete caracteres', 200)
   } else if(!token) {
@@ -568,8 +566,6 @@ exports.resetPassword = (req, res, next) => {
 
     User
       .findOneAndUpdate(FILTER, UPDATE, EXTRA, (err, userUpdated) => {
-        console.log('err: ', err)
-        console.log('userUpdated: ', userUpdated)
         if (err) {
           return res.failure(-1, err, 200)
         } if(!userUpdated) {
