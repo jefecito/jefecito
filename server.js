@@ -58,7 +58,7 @@ app.use(passport.session());
 /**
  * Error log management
  */
-let errorLogStream = fs.createWriteStream(__dirname + '/logs/error.log', {
+let errorLogStream = fs.createWriteStream(`${__dirname}/logs/error.log`, {
   flags: 'a'
 })
 
@@ -109,7 +109,7 @@ app.use((req, res, next) => {
  * Compress middleware to gzip content
  */
 app.use(compression())
-// app.use(favicon(__dirname + '/public/img/favicon.png'))
+// app.use(favicon(`${__dirname}/public/img/favicon.png`))
 
 /**
  * Require Mongo configuration
@@ -139,28 +139,20 @@ app.use(passport.session())
 
 /**
  * Routes
- const login = require('./routes/login')
- const user = require('./routes/user')
- const api = require('./routes/api')
-*/
-
-/**
- * Routes usage
- app.use('/', login)
- app.use('/', user)
- app.use('/', api)
 */
 require('./routes/index')(app)
-/*
-app.use('/api-docs', (req, res) => {
-  res.json(require('./docs/api.json'))
-})
 
-app.use('/internal/docs', swaggerUi({
-  validatorUrl: null,
-  docs: '/api-docs'
-}))
+/*
+  app.use('/api-docs', (req, res) => {
+    res.json(require('./docs/api.json'))
+  })
+
+  app.use('/internal/docs', swaggerUi({
+    validatorUrl: null,
+    docs: '/api-docs'
+  }))
 */
+
 /**
  * Disable server banner header
  */
