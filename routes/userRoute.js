@@ -18,7 +18,6 @@ module.exports = application => {
   application
     .route('/api/users')
     .get(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.getAllUsers)
-    .post(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.createUser)
     .delete(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.removeUser)
 
   /**
