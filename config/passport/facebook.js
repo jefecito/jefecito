@@ -1,15 +1,11 @@
 /* jshint esversion: 6 */
 
-/**
- * Modules
- */
+// Modules
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const mongoose = require('mongoose')
 
-/**
- * Variables
- */
+// Variables
 const AUTH = require('../app/auth')
 const CONFIG = {
   clientID: AUTH.facebookAuth.clientID,
@@ -29,9 +25,7 @@ const CONFIG = {
   ]
 }
 
-/**
- * Models
- */
+// Models
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -44,9 +38,7 @@ passport.deserializeUser((id, done) => {
   })
 })
 
-/**
- * Facebook
- */
+// Facebook
 passport.use(new FacebookStrategy(CONFIG, (token, refreshToken, profile, done) => {
   process.nextTick(() => {
     let FILTER = {

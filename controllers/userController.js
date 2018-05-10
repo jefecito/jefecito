@@ -1,8 +1,6 @@
 /* jshint esversion: 6 */
 
-/**
- * Requires
- */
+// Modules
 const mongoose = require('mongoose')
 const validator = require('validator')
 const mkdirp = require('mkdirp')
@@ -12,20 +10,14 @@ const EmailTemplate = require('email-templates-v2').EmailTemplate
 const path = require('path')
 const bcrypt = require('bcrypt')
 
-/**
- * Models
- */
+// Models
 const User = mongoose.model('User')
 
-/**
- * APP cfg
- */
+// APP cfg
 const APP = require('../config/app/main')
 const transporter = APP.getTransporter()
 
-/**
- * Export Email Templates
- */
+// Export Email Templates
 const requestPasswordTemplate = new EmailTemplate(
   path.join(
     __dirname,
@@ -34,11 +26,8 @@ const requestPasswordTemplate = new EmailTemplate(
   )
 )
 
-/**
- * Admin APIs:
- * 
- * Trae todos los usuarios o específico según ID
- */
+// Admin APIs:
+// Trae todos los usuarios o específico según ID
 exports.getAllUsers = (req, res, next) => {
   const {
     id
@@ -60,9 +49,7 @@ exports.getAllUsers = (req, res, next) => {
     }) // User.find()
 }
 
-/**
- * Elimina un usuario específico según ID
- */
+// Elimina un usuario específico según ID
 exports.removeUser = (req, res, next) => {
   const {
     id
@@ -91,9 +78,7 @@ exports.removeUser = (req, res, next) => {
     })
 }
 
-/**
- * Trae todos los administradores
- */
+// Trae todos los administradores
 exports.getAllAdmins = (req, res, next) => {
   const FILTER = {
     'local.roles': {
@@ -111,10 +96,8 @@ exports.getAllAdmins = (req, res, next) => {
     })
 }
 
-/**
- * Agrega o remueve los privilegios de administrador
- * de un usuario específico (id)
- */
+// Agrega o remueve los privilegios de administrador
+// de un usuario específico (id)
 exports.toggleAdminPriviliges = (req, res, next) => {
   const {
     id,
@@ -154,11 +137,8 @@ exports.toggleAdminPriviliges = (req, res, next) => {
   }
 }
 
-/**
- * User APIs:
- * 
- * Traer información mi usuario
- */
+// User APIs:
+// Traer información mi usuario
 exports.currentUserInfo = (req, res, next) => {
   const B = req.body
 
@@ -189,9 +169,7 @@ exports.currentUserInfo = (req, res, next) => {
     }) // User.findById
 }
 
-/**
- * Confirmo el Email del usuario
- */
+// Confirmo el Email del usuario
 exports.confirmEmail = (req, res, next) => {
   const {
     id
@@ -230,9 +208,7 @@ exports.confirmEmail = (req, res, next) => {
   } // if/else
 }
 
-/**
- * Actualiza el nombre de usuario, e email.
- */
+// Actualiza el nombre de usuario, e email.
 exports.updateCurrentUserInfo = (req, res, next) => {
   if (!req.user) {
     return res.failure(-1, 'Acceso denegado', 200)
@@ -241,7 +217,7 @@ exports.updateCurrentUserInfo = (req, res, next) => {
   const B = req.body
   const username = validator.escape(B.username) || ''
 
-  if(!validator.isEmail(B.email)) {
+  if (!validator.isEmail(B.email)) {
     return res.failure(-1, 'Email inválido', 200)
   } else {
     let FILTER = {
@@ -259,9 +235,9 @@ exports.updateCurrentUserInfo = (req, res, next) => {
       .findOne(FILTER, (err, user) => {
         if (err) {
           return res.failure(-1, err, 200)
-        } else if(user && user.local.username === username) {
+        } else if (user && user.local.username === username) {
           return res.failure(-1, 'El nombre de usuario ya esta en uso', 200)
-        } else if(user && user.local.email === B.email) {
+        } else if (user && user.local.email === B.email) {
           return res.failure(-1, 'El correo electrónico ya se encuentra registrado', 200)
         } else {
           FILTER = {
@@ -293,9 +269,7 @@ exports.updateCurrentUserInfo = (req, res, next) => {
   } // if/else
 }
 
-/**
- * Actualiza el avatar
- */
+// Actualiza el avatar
 exports.changeAvatar = (req, res, next) => {
   const USER = req.user
   const imageName = `avatar_${Date.now()}`
@@ -354,9 +328,7 @@ exports.changeAvatar = (req, res, next) => {
   }) // mkdirp()
 }
 
-/**
- * Usuario actualiza contraseña manualmente
- */
+// Usuario actualiza contraseña manualmente
 exports.changePassword = (req, res, next) => {
   const B = req.body
 
@@ -400,9 +372,7 @@ exports.changePassword = (req, res, next) => {
     }) // User.findById()
 }
 
-/**
- * Usuario olvida contraseña
- */
+// Usuario olvida contraseña
 exports.requestPassword = (req, res, next) => {
   const {
     email = ''
@@ -475,9 +445,7 @@ exports.requestPassword = (req, res, next) => {
   }
 }
 
-/**
- * Usuario cambia contraseña en base a requestPassword
- */
+// Usuario cambia contraseña en base a requestPassword
 exports.resetPassword = (req, res, next) => {
   const {
     token,
@@ -522,11 +490,9 @@ exports.resetPassword = (req, res, next) => {
   } // if/else
 }
 
-/**
- * Verifica que el token no este expirado 
- * o sea un token válido, y devuelvo la hora
- * en que expira
- */
+// Verifica que el token no este expirado 
+// o sea un token válido, y devuelvo la hora
+// en que expira
 exports.getInfoTokenPassword = (req, res, next) => {
   const {
     token = ''
@@ -553,11 +519,8 @@ exports.getInfoTokenPassword = (req, res, next) => {
     }) // User.findOne()
 }
 
-/**
- * Funciones auxiliares
- * 
- * Chequea el método de registración
- */
+// Funciones auxiliares
+// Chequea el método de registración
 function checkCreationMethod(method) {
   if (method == 'local' || method == 'superadmin') {
     return true

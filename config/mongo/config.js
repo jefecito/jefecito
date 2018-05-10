@@ -1,24 +1,16 @@
 /* jshint esversion: 6 */
 
-/**
- * Modules
- */
+// Modules
 const mongoose = require('mongoose')
 const colors = require('colors')
 
-/**
- * Variables
- */
+// Variables
 const CONFIG = require('../app/config')
 
-/**
- * Import Models
- */
+// Import Models
 require('../../models/index')()
 
-/**
- * Connect mongoose database
- */
+// Connect mongoose database
 mongoose.connect(`mongodb://127.0.0.1/${CONFIG.appName}`, err => {
   if (err) {
     console.log((`[+] MongoDB ${err}`).red)
@@ -28,9 +20,7 @@ mongoose.connect(`mongodb://127.0.0.1/${CONFIG.appName}`, err => {
   }
 })
 
-/**
- * Create superadmin user
- */
+// Create superadmin user
 const User = mongoose.model('User')
 const FILTER = {
   'local.creationMethod': 'superadmin'

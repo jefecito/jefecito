@@ -1,42 +1,33 @@
 /* jshint esversion: 6 */
 
-/**
- * Variables
- */
+// Variables
 const APP = require('./main')
 const URL = APP.getENV().url
 
-/**
- * Export Auth
- */
+// Export Auth
 module.exports = {
-  /**
-   * Facebook Credentials
-   */
+  // Facebook Credentials
   facebookAuth: {
     clientID: APP.auth.facebook.id,
     clientSecret: APP.auth.facebook.secret,
     callbackURL: `${URL}/auth/callback/facebook`
   },
-  /**
-   * Twitter Credentials
-   */
+
+  // Twitter Credentials
   twitterAuth: {
     consumerKey: APP.auth.twitter.id,
     consumerSecret: APP.auth.twitter.secret,
     callbackURL: `${URL}/auth/callback/twitter`
   },
-  /**
-   * Google Credentials
-   */
+
+  // Google Credentials
   googleAuth: {
     clientID: APP.auth.google.id,
     clientSecret: APP.auth.google.secret,
     callbackURL: `${URL}/auth/callback/google`
   },
-  /**
-   * LinkedIn Credentials
-   */
+
+  // LinkedIn Credentials
   linkedinAuth: {
     clientID: APP.auth.linkedin.id,
     clientSecret: APP.auth.linkedin.secret,

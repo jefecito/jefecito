@@ -1,8 +1,6 @@
 /* jshint esversion: 6 */
 
-/**
- * Modules
- */
+// Modules
 const passport = require('passport')
 const validator = require('validator')
 const mongoose = require('mongoose')
@@ -10,20 +8,14 @@ const jwt = require('jsonwebtoken')
 const EmailTemplate = require('email-templates-v2').EmailTemplate
 const path = require('path')
 
-/**
- * Models
- */
+// Models
 const User = mongoose.model('User')
 
-/**
- * APP cfg
- */
+// APP cfg
 const APP = require('../config/app/main')
 const transporter = APP.getTransporter()
 
-/**
- * Export Email Templates
- */
+// Export Email Templates
 const confirmEmail = new EmailTemplate(
   path.join(
     __dirname,
@@ -32,9 +24,7 @@ const confirmEmail = new EmailTemplate(
   )
 )
 
-/**
- * Inicio de Sesión Local
- */
+// Inicio de Sesión Local
 exports.logInLocal = (req, res, next) => {
   passport.authenticate('local-login', (err, user, info) => {
     if (err) {
@@ -56,9 +46,7 @@ exports.logInLocal = (req, res, next) => {
   })(req, res, next)
 }
 
-/**
- * Registro Local
- */
+// Registro Local
 exports.registerLocal = (req, res, next) => {
   const {
     password,
@@ -145,9 +133,7 @@ exports.registerLocal = (req, res, next) => {
   }
 }
 
-/**
- * Auth Callback Social
- */
+// Auth Callback Social
 exports.logInCallback = (req, res, next) => {
   passport.authenticate(req.params.social, (err, user, info) => {
     if (err) {
@@ -172,19 +158,14 @@ exports.logInCallback = (req, res, next) => {
   })(req, res, next)
 }
 
-/**
- * Cerrar de Sesión
- */
+// Cerrar de Sesión
 exports.logOut = (req, res, next) => {
   req.logout()
   return res.success('Sesión cerrada', 200)
 }
 
-/**
- * Funciones Auxiliares
- * 
- * Generar Payload
- */
+// Funciones Auxiliares
+// Generar Payload
 function generatePayload (user) {
   const tokenConfig = {
     id: user._id,

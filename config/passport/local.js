@@ -1,16 +1,12 @@
 /* jshint esversion: 6 */
 
-/**
- * Modules
- */
+// Modules
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const validator = require('validator')
 const mongoose = require('mongoose')
 
-/**
- * Models
- */
+// Models
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -21,9 +17,7 @@ passport.deserializeUser((user, done) => {
   done(null, user)
 })
 
-/**
- * Local
- */
+// Local
 passport.use('local-login', new LocalStrategy((username, password, done) => {
   if (!validator.isEmail(username)) {
     return done(null, false, {

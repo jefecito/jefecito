@@ -1,15 +1,11 @@
 /* jshint esversion: 6 */
 
-/**
- * Modules
- */
+// Modules
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 const mongoose = require('mongoose')
 
-/**
- * Variables
- */
+// Variables
 const AUTH = require('../app/auth')
 const CONFIG ={
   clientID: AUTH.googleAuth.clientID,
@@ -21,9 +17,7 @@ const CONFIG ={
   ]
 }
 
-/**
- * Models
- */
+// Models
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -36,9 +30,7 @@ passport.deserializeUser((id, done) => {
   })
 })
 
-/**
- * Google
- */
+// Google
 passport.use(new GoogleStrategy(CONFIG, (token, refreshToken, profile, done) => {
   process.nextTick(() => {
     let FILTER = {
@@ -105,7 +97,7 @@ passport.use(new GoogleStrategy(CONFIG, (token, refreshToken, profile, done) => 
                   id: profile.id,
                   token,
                   name: profile.displayName,
-                  email: profile.emails[0].value // pull the first email
+                  email: profile.emails[0].value
                 }
 
                 user

@@ -1,19 +1,13 @@
 /* jshint esversion: 6 */
 
-/**
- * Modules
- */
+// Modules
 const express = require('express')
 const nodemailer = require('nodemailer')
 
-/**
- * Variables
- */
+// Variables
 const CONFIG = require('./config')
 
-/**
- * App Module
- */
+// App Module
 module.exports = {
   name: CONFIG.appName,
   domain: CONFIG.appURL,
@@ -46,9 +40,8 @@ module.exports = {
   jwtSecret: 'j3f3c1t0_jwtS3cr3t',
   getTransporter () {
     let t
-    /**
-     * Service GMAIL, etc:
-     */
+
+    // Service GMAIL, etc:
     t = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -56,9 +49,8 @@ module.exports = {
         pass: ''
       }
     })
-    /**
-     * Own Host (remove comment)
-     */
+
+    // Own Host (remove comment)
     /*
       t = nodemailer.createTransport({
         host: '',

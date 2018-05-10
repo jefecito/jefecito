@@ -1,24 +1,17 @@
 /* jshint esversion: 6 */
 
-/**
- * Modulos
- */
+// Modulos
 const mongoose = require('mongoose')
 const mkdirp = require('mkdirp')
 const multer = require('multer')
 const fs = require('fs')
 
-/**
- * Modelos
- */
+// Modelos
 const Files = mongoose.model('Upload')
 const User = mongoose.model('Upload')
 
-/**
- * User APIS
- * 
- * Trae los archivos de un usuario (públicos y asignados)
- */
+// User APIS
+// Trae los archivos de un usuario (públicos y asignados)
 exports.getUserFiles = (req, res, next) => {
   const Q = req.query
   let FILTER = {
@@ -57,14 +50,10 @@ exports.getUserFiles = (req, res, next) => {
     }) // Files.find()
 } // getUserFiles()
 
-/**
- * Subir un archivo
- */
+// Subir un archivo
 exports.uploadFile = (req, res, next) => {
   mkdirp('document/upload', (err) => {
-    /**
-     * Config Storage
-     */
+    // Config Storage
     const storageConfig = multer.diskStorage({
       destination: (req, file, cb) => {
         cb(null, 'document/upload');
@@ -74,9 +63,7 @@ exports.uploadFile = (req, res, next) => {
       }
     })
 
-    /**
-     * Config Multer
-     */
+    // Config Multer
     const multerConfig = {
       storage: storageConfig,
       limits: {
@@ -93,9 +80,7 @@ exports.uploadFile = (req, res, next) => {
       } else {
         const B = req.body
 
-        /**
-         * Genero los archivos
-         */
+        // Genero los archivos
         const filesArray = req.files.map(file => {
           let newFile = new Files({
             uploadedBy: req.user._id,
@@ -116,9 +101,7 @@ exports.uploadFile = (req, res, next) => {
           }
         })
 
-        /**
-         * Subo los archivos
-         */
+        // Subo los archivos
         Files
           .insertMany(filesArray, (err, files) => {
             if(err) {
@@ -146,10 +129,8 @@ exports.uploadFile = (req, res, next) => {
                 multi: true
               }
 
-              /**
-               * Actualizo los usuarios a los cuales
-               * les asigné dichos archivos
-               */
+              // Actualizo los usuarios a los cuales
+              // les asigné dichos archivos
               User
                 .update(FILTER, UPDATED, EXTRAS, (err, updated) => {
                   if (err) {
@@ -165,9 +146,7 @@ exports.uploadFile = (req, res, next) => {
   }) // mkdirp()
 } // uploadFile()
 
-/**
- * Descargar un archivo
- */
+// Descargar un archivo
 exports.downloadFile = (req, res, next) => {
   const B = req.body
 
@@ -202,11 +181,8 @@ exports.downloadFile = (req, res, next) => {
     })
 } // downloadFile()
 
-/**
- * Admin APIS
- * 
- * Trae TODOS los archivos subidos en el servidor
- */
+// Admin APIS
+// Trae TODOS los archivos subidos en el servidor
 exports.getAllFiles = (req, res, next) => {
   const Q = req.query
   let FILTER = {};
@@ -225,9 +201,7 @@ exports.getAllFiles = (req, res, next) => {
     }) // Files.find()
 } // getAllFiles()
 
-/**
- * Elimina un archivo
- */
+// Elimina un archivo
 exports.deleteFile = (req, res, next) => {
   const B = req.body
 

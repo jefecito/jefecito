@@ -1,13 +1,9 @@
 /* jshint esversion: 6 */
 
 module.exports = application => {
-  /**
-   * Import auth routes
-   */
+  // Auth routes
   require('./authRoute')(application)
 
-  /**
-   * Import user routes
-   */
+  // User routes
   require('./userRoute')(application)
 }

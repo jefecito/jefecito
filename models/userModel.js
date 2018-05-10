@@ -1,14 +1,10 @@
 /* jshint esversion: 6 */
 
-/**
- * Requires
- */
+// Modulos
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 
-/**
- * Declare schema
- */
+// Declare schema
 const UserSchema = new mongoose.Schema({
   local: {
     createdAt: {

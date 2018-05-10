@@ -1,18 +1,12 @@
 /* jshint esversion: 6 */
 
 module.exports = () => {
-  /**
-   * User model
-   */
+  // User model
   require('./userModel')
 
-  /**
-   * Alert model
-   */
+  // Alert model
   require('./alertModel')
 
-  /**
-   * Document model
-   */
+  // Document model
   require('./uploadModel')
 }

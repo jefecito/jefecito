@@ -1,13 +1,9 @@
 /* jshint esversion: 6 */
 
-/**
- * Requires
- */
+// Modulos
 const mongoose = require('mongoose')
 
-/**
- * Declare schema
- */
+// Declare schema
 const uploadSchema = new mongoose.Schema({
   uploadedAt: Date,
   uploadedBy: {

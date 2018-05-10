@@ -1,15 +1,11 @@
 /* jshint esversion: 6 */
 
-/**
- * Requires
- */
+// Requires
 const passport = require('passport')
 const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy
 const mongoose = require('mongoose')
 
-/**
- * Variables
- */
+// Variables
 const AUTH = require('../app/auth')
 const CONFIG = {
   clientID: AUTH.linkedinAuth.clientID,
@@ -22,9 +18,7 @@ const CONFIG = {
   state: true
 }
 
-/**
- * Models
- */
+// Models
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -37,9 +31,7 @@ passport.deserializeUser((id, done) => {
   })
 })
 
-/**
- * LinkedIn
- */
+// LinkedIn
 passport.use(new LinkedInStrategy(CONFIG, (accessToken, refreshToken, profile, done) => {
   process.nextTick(() => {
     let FILTER = {

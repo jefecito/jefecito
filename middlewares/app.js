@@ -1,21 +1,15 @@
 /* jshint esversion: 6 */
 
-/**
- * Modules
- */
+// Modules
 const RateLimiter = require('limiter').RateLimiter
 const limiter = new RateLimiter(5, 'second', true)
 const jwt = require('jsonwebtoken')
 
-/**
- * APP config
- */
+// APP config
 const APP = require('../config/app/main')
 
 module.exports = {
-  /**
-   * Limita la cantidad de requests en un período de tiempo
-   */
+  // Limita la cantidad de requests en un período de tiempo
   rateLimiter: (req, res, next) => {
     limiter.removeTokens(1, (err, remainingRequests) => {
       if (remainingRequests > 0) {
@@ -29,20 +23,16 @@ module.exports = {
     }) // limiter.removeTokens
   },
 
-  /**
-   * Chequea si el usuario logueado es admin
-   */
+  // Chequea si el usuario logueado es admin
   isAdmin: (req, res, next) => {
     if (req.user.roles.indexOf('admin') === -1) {
       return res.failure(-1, 'Acceso denegado', 403)
-    } // if
+    }
 
     return next()
   },
 
-  /**
-   * Middleware to check JWT access
-   */
+  // Middleware to check JWT access
   requireAuth: (req, res, next) => {
     const token = req.body.token ||
       req.query.token ||

@@ -1,15 +1,11 @@
 /* jshint esversion: 6 */
 
-/**
- * Modules
- */
+// Modules
 const passport = require('passport')
 const TwitterStrategy = require('passport-twitter').Strategy
 const mongoose = require('mongoose')
 
-/**
- * Variables
- */
+// Variables
 const AUTH = require('../app/auth')
 const CONFIG = {
   consumerKey: AUTH.twitterAuth.consumerKey,
@@ -17,9 +13,7 @@ const CONFIG = {
   callbackURL: AUTH.twitterAuth.callbackURL
 }
 
-/**
- * Models
- */
+// Models
 const User = mongoose.model('User')
 
 passport.serializeUser((user, done) => {
@@ -32,9 +26,7 @@ passport.deserializeUser((id, done) => {
   })
 })
   
-/**
- * Twitter
- */
+// Twitter
 passport.use(new TwitterStrategy(CONFIG, (token, tokenSecret, profile, done) => {
   process.nextTick(() => {
     let FILTER = {

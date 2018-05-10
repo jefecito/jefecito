@@ -1,11 +1,7 @@
-/**
- * Variables
- */
+// Variables
 const cacheTime = 86400000 * 30
 
-/**
- * Modules
- */
+// Modules
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
@@ -18,27 +14,18 @@ const path = require('path')
 const logger = require('morgan')
 const passport = require('passport')
 const helmet = require('helmet')
-const swaggerUi = require('swaggerize-ui')
-const jsonfile = require('jsonfile')
 const cors = require('cors')
 
-
-/**
- * App configuration
- */
+// App configuration
 const APP = require('./config/app/main')
 
-/**
- * Creates folder log
- */
+// Creates folder log
 if (!fs.existsSync('./logs')) {
   console.log('[+] logs folder created')
   fs.mkdirSync('./logs')
 }
 
-/**
- * Express configuration
- */
+// Express configuration
 const app = express()
 
 app.use(logger('dev'))
@@ -55,16 +42,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-/**
- * Error log management
- */
+// Error log management
 let errorLogStream = fs.createWriteStream(`${__dirname}/logs/error.log`, {
   flags: 'a'
 })
 
-/**
- * Error handling, avoiding crash
- */
+// Error handling, avoiding crash
 process.on('uncaughtException', (err, req, res, next) => {
   let date = new Date()
   console.error(`+++++++ ${date} error found, logging event +++++++ `)
@@ -73,16 +56,12 @@ process.on('uncaughtException', (err, req, res, next) => {
   return
 })
 
-/**
- * Helment security lib
- */
+// Helment security lib
 app.use(helmet())
 
 app.use(cors())
 
-/**
- * Response definition
- */
+// Response definition
 app.use((req, res, next) => {
   res.success = (data, status) => {
     return res.status(status || 200).send({
@@ -105,25 +84,17 @@ app.use((req, res, next) => {
   next()
 })
 
-/**
- * Compress middleware to gzip content
- */
+// Compress middleware to gzip content
 app.use(compression())
 // app.use(favicon(`${__dirname}/public/img/favicon.png`))
 
-/**
- * Require Mongo configuration
- */
+// Require Mongo configuration
 require('./config/mongo/config')
 
-/**
- * Require local and social network passport
- */
+// Require local and social network passport
 require('./config/passport/index')()
 
-/**
- * View engine setup
- */
+// View engine setup
 app.use(bodyParser.json({
   limit: '50mb'
 }))
@@ -137,42 +108,23 @@ app.use(cookieParser(APP.name))
 app.use(passport.initialize())
 app.use(passport.session())
 
-/**
- * Routes
-*/
+// Routes
 require('./routes/index')(app)
 
-/*
-  app.use('/api-docs', (req, res) => {
-    res.json(require('./docs/api.json'))
-  })
-
-  app.use('/internal/docs', swaggerUi({
-    validatorUrl: null,
-    docs: '/api-docs'
-  }))
-*/
-
-/**
- * Disable server banner header
- */
+// Disable server banner header
 app.disable('x-powered-by')
 
-/**
- * Catch 404 and forward to error handler
- */
+// Catch 404 and forward to error handler
 app.use((req, res, next) => {
   var err = new Error('Not Found')
   err.status = 404
   next(err)
 })
 
-/**
- * Error Handlers
- * 
- * Development error handler
- * Will print stacktrace
- */
+// Error Handlers
+
+// Development error handler
+// Will print stacktrace
 if (process.env.NODE_ENV === 'development') {
   app.use((err, req, res, next) => {
     res.status(err.status || 500).send({
@@ -185,10 +137,8 @@ if (process.env.NODE_ENV === 'development') {
   })
 }
 
-/**
- * Production error handler
- * No stacktraces leaked to user
- */
+// Production error handler
+// No stacktraces leaked to user
 app.use((err, req, res, next) => {
   res.status(err.status || 500).send({
     success: false,
@@ -199,14 +149,10 @@ app.use((err, req, res, next) => {
   })
 })
 
-/**
- * Set PORT
- */
+// Set PORT
 app.set('port', process.env.PORT || APP.port)
 
-/**
- * Firing Up express
- */
+// Firing Up express
 const server = http.createServer(app).listen(app.get('port'), '127.0.0.1', () => {
   console.log(`${APP.name} server listening on port ${app.get('port')}`)
 })

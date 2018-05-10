@@ -1,13 +1,9 @@
 /* jshint esversion: 6 */
 
-/**
- * Requires
- */
+// Modulos
 const mongoose = require('mongoose')
 
-/**
- * Declare schema
- */
+// Declare Schema
 const alertsSchema = new mongoose.Schema({
   date: {
     created: Date,
