@@ -13,13 +13,15 @@ const User = mongoose.model('Upload')
 // User APIS
 // Trae los archivos de un usuario (públicos y asignados)
 exports.getUserFiles = (req, res, next) => {
-  const Q = req.query
+  const {
+    id
+  } = req.query
   let FILTER = {
     'uploadTo.global': true
   }
 
-  if (!Q.id) {
-    FILTER._id = Q.id
+  if (!id) {
+    FILTER._id = id
   }
 
   Files
@@ -78,7 +80,11 @@ exports.uploadFile = (req, res, next) => {
       if (err) {
         return res.failure(-1, err, 200);
       } else {
-        const B = req.body
+        const {
+          folder,
+          global,
+          usersArray
+        } = req.body
 
         // Genero los archivos
         const filesArray = req.files.map(file => {
@@ -90,14 +96,14 @@ exports.uploadFile = (req, res, next) => {
             uploadPath: file.path,
             uploadAlias: file.originalname,
             uploadTo: {
-              folder: B.folder
+              folder: folder
             }
           })
 
-          if (B.global) {
+          if (global) {
             newFile.uploadTo.global = true
           } else {
-            newFile.uploadTo.users = JSON.parse(B.usersArray)
+            newFile.uploadTo.users = JSON.parse(usersArray)
           }
         })
 
@@ -148,9 +154,11 @@ exports.uploadFile = (req, res, next) => {
 
 // Descargar un archivo
 exports.downloadFile = (req, res, next) => {
-  const B = req.body
+  const {
+    id
+  } = req.body
 
-  if (!B.id) {
+  if (!id) {
     return res.failure(-1, 'Archivo no identificado', 200)
   }
 
@@ -176,7 +184,7 @@ exports.downloadFile = (req, res, next) => {
       } else if(!doc) {
         return res.failure(-2, 'Archivo inválido', 200)
       } else {
-        res.download(document.uploadPath)
+        return res.download(document.uploadPath)
       }
     })
 } // downloadFile()
@@ -184,11 +192,14 @@ exports.downloadFile = (req, res, next) => {
 // Admin APIS
 // Trae TODOS los archivos subidos en el servidor
 exports.getAllFiles = (req, res, next) => {
-  const Q = req.query
+  const {
+    id
+  } = req.query
+
   let FILTER = {};
 
-  if (!Q.id) {
-    filter._id = Q.id
+  if (!id) {
+    FILTER._id = id
   }
 
   Files
@@ -203,14 +214,16 @@ exports.getAllFiles = (req, res, next) => {
 
 // Elimina un archivo
 exports.deleteFile = (req, res, next) => {
-  const B = req.body
+  const {
+    id
+  } = req.body
 
-  if (!B.id) {
+  if (!id) {
     return res.failure(-1, 'Archivo no identificado', 200)
   }
 
   const FILTER = {
-    _id: B.id
+    _id: id
   }
 
   const EXTRAS = {

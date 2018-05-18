@@ -1,8 +1,27 @@
 /* jshint esversion: 6 */
 
-// Modulos
-const userController = require('../controllers/userController')
-const mw = require('../middlewares/app')
+// user controller functions
+const {
+  getAllUsers,
+  removeUser
+} = require('../controllers/userController')
+
+// middlewares
+const {
+  rateLimiter,
+  requireAuth,
+  isAdmin,
+  getAllAdmins,
+  toggleAdminPriviliges,
+  currentUserInfo,
+  updateCurrentUserInfo,
+  confirmEmail,
+  changeAvatar,
+  changePassword,
+  getInfoTokenPassword,
+  requestPassword,
+  resetPassword
+} = require('../middlewares/app')
 
 module.exports = application => {
   // Admin APIs:
@@ -12,15 +31,15 @@ module.exports = application => {
   // DELETE: Eliminación de Usuarios
   application
     .route('/api/users')
-    .get(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.getAllUsers)
-    .delete(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.removeUser)
+    .get(rateLimiter, requireAuth, isAdmin, getAllUsers)
+    .delete(rateLimiter, requireAuth, isAdmin, removeUser)
 
   // GET: Listado de administradores
   // PUT: Agrega/remueve privilegios de administrador
   application
     .route('/api/admins')
-    .get(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.getAllAdmins)
-    .put(mw.rateLimiter, mw.requireAuth, mw.isAdmin, userController.toggleAdminPriviliges)
+    .get(rateLimiter, requireAuth, isAdmin, getAllAdmins)
+    .put(rateLimiter, requireAuth, isAdmin, toggleAdminPriviliges)
 
 
   // User APIs:
@@ -29,36 +48,36 @@ module.exports = application => {
   // PUT: Actualiza nombre de usuario y correo electronico
   application
     .route('/api/user/me')
-    .post(mw.rateLimiter, mw.requireAuth, userController.currentUserInfo)
-    .put(mw.rateLimiter, mw.requireAuth, userController.updateCurrentUserInfo)
+    .post(rateLimiter, requireAuth, currentUserInfo)
+    .put(rateLimiter, requireAuth, updateCurrentUserInfo)
 
   // Confirmo Email
   application
     .route('/api/user/confirm')
-    .get(mw.rateLimiter, userController.confirmEmail)
+    .get(rateLimiter, confirmEmail)
 
   // Actualizo mi avatar
   application
     .route('/api/user/me/avatar')
-    .post(mw.rateLimiter, mw.requireAuth, userController.changeAvatar)
+    .post(rateLimiter, requireAuth, changeAvatar)
 
   // Usuario cambia contraseña
   application
     .route('/api/user/me/change-password')
-    .put(mw.rateLimiter, mw.requireAuth, userController.changePassword)
+    .put(rateLimiter, requireAuth, changePassword)
 
   // Trae información de un token para resetear contraseña
   application
     .route('/api/user/token')
-    .get(mw.rateLimiter, userController.getInfoTokenPassword)
+    .get(rateLimiter, getInfoTokenPassword)
 
   // Usuario olvida contraseña
   application
     .route('/api/user/me/request-password')
-    .put(mw.rateLimiter, userController.requestPassword)
+    .put(rateLimiter, requestPassword)
 
   // Usuario cambia su contraseña en base (requestPassowrd)
   application
     .route('/api/user/me/reset-password')
-    .put(mw.rateLimiter, userController.resetPassword)
+    .put(rateLimiter, resetPassword)
 }

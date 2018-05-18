@@ -140,7 +140,9 @@ exports.toggleAdminPriviliges = (req, res, next) => {
 // User APIs:
 // Traer información mi usuario
 exports.currentUserInfo = (req, res, next) => {
-  const B = req.body
+  const {
+    token
+  } = req.body
 
   if (!req.user) {
     return res.failure(-1, 'Usuario no identificado', 200)
@@ -161,7 +163,7 @@ exports.currentUserInfo = (req, res, next) => {
           email: user.local.email,
           roles: user.local.roles,
           avatar: avatarUrl,
-          token: B.token
+          token: token
         }
 
         return res.success(response, 200)
@@ -214,10 +216,14 @@ exports.updateCurrentUserInfo = (req, res, next) => {
     return res.failure(-1, 'Acceso denegado', 200)
   }
 
-  const B = req.body
-  const username = validator.escape(B.username) || ''
+  let {
+    username,
+    email
+  } = req.body
 
-  if (!validator.isEmail(B.email)) {
+  username = validator.escape(username) || ''
+
+  if (!validator.isEmail(email)) {
     return res.failure(-1, 'Email inválido', 200)
   } else {
     let FILTER = {
@@ -227,7 +233,7 @@ exports.updateCurrentUserInfo = (req, res, next) => {
       $or: [{
         'local.username': username
       }, {
-        'local.email': B.email
+        'local.email': email
       }]
     }
 
@@ -237,7 +243,7 @@ exports.updateCurrentUserInfo = (req, res, next) => {
           return res.failure(-1, err, 200)
         } else if (user && user.local.username === username) {
           return res.failure(-1, 'El nombre de usuario ya esta en uso', 200)
-        } else if (user && user.local.email === B.email) {
+        } else if (user && user.local.email === email) {
           return res.failure(-1, 'El correo electrónico ya se encuentra registrado', 200)
         } else {
           FILTER = {
@@ -247,7 +253,7 @@ exports.updateCurrentUserInfo = (req, res, next) => {
           UPDATE = {
             $set: {
               'local.username': username,
-              'local.email': B.email
+              'local.email': email
             }
           }
 
@@ -271,13 +277,16 @@ exports.updateCurrentUserInfo = (req, res, next) => {
 
 // Actualiza el avatar
 exports.changeAvatar = (req, res, next) => {
-  const USER = req.user
+  const {
+    id
+  } = req.user
+
   const imageName = `avatar_${Date.now()}`
 
-  mkdirp(`public/uploads/${USER.id}/avatar/`, err => {
+  mkdirp(`public/uploads/${id}/avatar/`, err => {
     const storageConfig = multer.diskStorage({
       destination: (req, file, cb) => {
-        cb(null, `public/uploads/${USER.id}/avatar/`)
+        cb(null, `public/uploads/${id}/avatar/`)
       },
       filename: (req, file, cb) => {
         cb(null, imageName)
@@ -298,10 +307,10 @@ exports.changeAvatar = (req, res, next) => {
       if (err) {
         return res.failure(-1, err, 200)
       } else {
-        const path = `/uploads/${USER.id}/avatar/${imageName}`
+        const path = `/uploads/${id}/avatar/${imageName}`
 
         const FILTER = {
-          _id: USER._id
+          _id: id
         }
 
         const UPDATE = {
@@ -330,18 +339,19 @@ exports.changeAvatar = (req, res, next) => {
 
 // Usuario actualiza contraseña manualmente
 exports.changePassword = (req, res, next) => {
-  const B = req.body
+  const {
+    id = null,
+    password = '',
+    newPassword = ''
+  } = req.body
 
-  if (!B.id) {
+  if (!id) {
     return res.failure(-1, 'Usuario no identificado', 200)
   }
 
   const FILTER = {
-    _id: req.body.id
+    _id: id
   }
-
-  const password = B.password || ''
-  const newPassword = B.newPassword || ''
 
   User
     .findById(FILTER, (err, user) => {

@@ -1,20 +1,31 @@
 /* jshint esversion: 6 */
 
 // Modulos
-const authController = require('../controllers/authController')
 const passport = require('passport')
-const mw = require('../middlewares/app')
+
+// auth controller functions
+const {
+  logInLocal,
+  registerLocal,
+  logInCallback,
+  logOut
+} = require('../controllers/authController')
+
+// middlewares
+const {
+  rateLimiter
+} = require('../middlewares/app')
 
 module.exports = application => {
   // Iniciar Sesión Local
   application
     .route('/login')
-    .post(mw.rateLimiter, authController.logInLocal)
+    .post(rateLimiter, logInLocal)
 
   // Registrarse Localmente
   application
     .route('/register')
-    .post(mw.rateLimiter, authController.registerLocal)
+    .post(rateLimiter, registerLocal)
 
   // Ingresar / Registrarse con Twitter
   application
@@ -46,10 +57,10 @@ module.exports = application => {
   // Callback de Redes Sociales
   application
     .route('/auth/callback/:social')
-    .get(authController.logInCallback)
+    .get(logInCallback)
 
   // Cerrar Sesión
   application
     .route('/logout')
-    .get(mw.rateLimiter, authController.logOut)
+    .get(rateLimiter, logOut)
 }
